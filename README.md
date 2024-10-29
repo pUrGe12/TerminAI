@@ -10,3 +10,12 @@ A terminal with AI capabilities. Forget commands, just tell it what it do!
 ---
 
 For a better understanding of the structure refer the [workflow](./.idea/workflow.md)
+
+---
+
+ToDo
+
+- [x] Write the workflow properly. Don't leave anything ambiguous.
+- [ ] Start coding the web-sockets communication part and the terminal GUI
+- [ ] Figure out which models to use in extraction layer. Mostly Bart?
+- [ ] Update README.md
