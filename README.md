@@ -13,9 +13,10 @@ For a better understanding of the structure refer the [workflow](./.idea/workflo
 
 ---
 
-ToDo
+Pending work:
 
 - [x] Write the workflow properly. Don't leave anything ambiguous.
-- [ ] Start coding the web-sockets communication part and the terminal GUI
+- [x] Start coding the web-sockets communication part and the terminal GUI.
+- [ ] Make the repository navigable.
 - [ ] Figure out which models to use in extraction layer. Mostly Bart?
 - [ ] Update README.md
