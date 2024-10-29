@@ -1,8 +1,17 @@
 import sys
 import os
+import threading
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit, QLineEdit
 from PyQt5.QtGui import QFont, QTextCursor, QColor
 from PyQt5.QtCore import Qt
+import socket
+
+host = '127.0.0.1'
+port = 64920
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect((host, port))
+print("Connected to the server")
 
 class ModernTerminal(QWidget):
     def __init__(self):
@@ -10,6 +19,11 @@ class ModernTerminal(QWidget):
         self.init_ui()
         self.command_history = []
         self.history_index = -1
+        
+        # Start the receive thread
+        self.receive_thread = threading.Thread(target=self.receive_data)
+        self.receive_thread.daemon = True
+        self.receive_thread.start()
         
     def init_ui(self):
         # Set up the main window
@@ -62,30 +76,52 @@ class ModernTerminal(QWidget):
         if current_dir.startswith(home):
             current_dir = "~" + current_dir[len(home):]
         
-        prompt_text = f"➜ {current_dir} git:(main) "
+        # Define colors for each part of the prompt
+        arrow_color = "#98C379"  # Green color for the arrow
+        path_color = "#56B6C2"   # Blue color for the current directory path
+        symbol_color = "#C678DD" # Purple color for the "$" symbol
+        
+        # Styled prompt with HTML
+        prompt_text = (
+            f'<span style="color: {arrow_color};">➜</span> '
+            f'<span style="color: {path_color};">{current_dir}</span> '
+            f'<span style="color: {symbol_color};">$</span> '
+        )
+        
+        # Append the prompt with colors to the terminal display
         self.terminal_display.append(prompt_text)
         self.terminal_display.moveCursor(QTextCursor.End)
         
     def process_command(self):
         command = self.input_field.text()
         
-        # Display the entered command in the terminal display
         self.terminal_display.insertPlainText(command + "\n")
         
-        # Echo command result in gray (replace this with actual command processing output if needed)
         if command.strip():
             self.command_history.append(command)
             self.history_index = len(self.command_history)
-            self.terminal_display.append(f'<span style="color: #BBBBBB;">You entered: {command}</span>\n')
+            try:
+                client_socket.sendall(command.encode())  # Send command to server
+            except (KeyboardInterrupt, EOFError):
+                print("\nDetected interrupt or EOF, closing connection...")
         
-        
-
         # Clear input field and add new prompt
         self.input_field.clear()
-        self.append_prompt()
         
         # Scroll to bottom
         self.terminal_display.moveCursor(QTextCursor.End)
+
+    def receive_data(self):
+        while True:
+            try:
+                data = client_socket.recv(2048).decode()
+                if data:
+                    self.terminal_display.append(f'<span style="color: #BBBBBB;">Server: {data}</span>\n')
+                    self.terminal_display.moveCursor(QTextCursor.End)
+                    self.append_prompt()
+            except Exception as e:
+                print(f"Error receiving data: {e}")
+                break
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Up:
