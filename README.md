@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/Code-Bash-informational?style=flat&logo=Bash&color=yellow" alt="bash" />
 </p>
 
-A terminal with AI capabilities. Forget commands, just tell it what it do!
+**A terminal with AI capabilities.** Forget commands, just tell it what it do!
 
 ---
 
@@ -20,8 +20,8 @@ This is the architecture
 Pending work:
 
 - [x] Write the workflow properly. Don't leave anything ambiguous.
-- [x] Start coding the web-sockets communication part and the terminal GUI.
-- [x] Tell sequencer which model has been activated in extraction layer.
-- [ ] Figure out which models to use in extraction layer. Mostly Bart?
+- [x] Write sockets between GUI and Backend endpoint (`Be`)
+- [ ] Write sockets between `Be` and `sequencer`.
+- [ ] Complete sequencer.
 - [ ] Update README.md
 - [ ] Make the repository navigable.
