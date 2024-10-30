@@ -13,7 +13,7 @@ For a better understanding of the structure refer the [workflow](./idea/README.m
 
 This is the image for the 
 
-[Architecture](./idea/TerminAI.png)
+![Architecture](./idea/TerminAI.png)
 
 ---
 
