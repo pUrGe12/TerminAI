@@ -7,6 +7,7 @@
 
 2. This terminal communicates via web-sockets to the backend which is listening attentively. The user enters some input and this is sent to the backend.
 
+3. The extraction layer also let's the sequencer know which model has been activated. 
 ---
 
 ## Backend

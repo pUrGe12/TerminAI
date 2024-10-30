@@ -17,6 +17,7 @@ Pending work:
 
 - [x] Write the workflow properly. Don't leave anything ambiguous.
 - [x] Start coding the web-sockets communication part and the terminal GUI.
-- [ ] Make the repository navigable.
+- [x] Tell sequencer which model has been activated in extraction layer.
 - [ ] Figure out which models to use in extraction layer. Mostly Bart?
 - [ ] Update README.md
+- [ ] Make the repository navigable.
