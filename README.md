@@ -25,3 +25,7 @@ Pending work:
 - [ ] Complete sequencer.
 - [ ] Update README.md
 - [ ] Make the repository navigable.
+
+---
+
+# You're building this, but do you really understand how things are happening?
