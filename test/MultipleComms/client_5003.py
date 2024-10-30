@@ -86,7 +86,12 @@ class ReceiverSender:
 
 def GPT_response(prompt):
     """Generate response using GPT for the given prompt"""
-    prompt_init = f"""You will be given a prompt, figure out something from it. This is the prompt: {prompt}"""
+    
+    prompt_init = f"""
+    You will be given a prompt, figure out if the user is a man. 
+    Your output needs to be either "yes", "no", "null". 
+    You should say "null" when you can't determine the gender based on the prompt. 
+    This is the prompt: {prompt}"""
 
     try:
         output_init = ''
@@ -117,7 +122,8 @@ if __name__ == "__main__":
                 received_message = receiver.message_queue.get()
                 response = GPT_response(received_message)
                 if response:
-                    receiver.send_message(response)
+                    if "yes" in response:
+                        receiver.send_message(response)
             time.sleep(0.1)
             
     except KeyboardInterrupt:
