@@ -9,7 +9,11 @@ A terminal with AI capabilities. Forget commands, just tell it what it do!
 
 ---
 
-For a better understanding of the structure refer the [workflow](./.idea/workflow.md)
+For a better understanding of the structure refer the [workflow](./idea/README.md)
+
+This is the image for the 
+
+[Architecture](./idea/TerminAI.png)
 
 ---
 
