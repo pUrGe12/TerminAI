@@ -7,6 +7,8 @@ from queue import Queue
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
 
+name = 'client_5002'
+
 API_KEY = ""   # Enter your API key here
 genai.configure(api_key=API_KEY)
 

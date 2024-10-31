@@ -7,7 +7,9 @@ from queue import Queue
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
 
-API_KEY = ""   # Enter your API key here
+name = 'client_5002'
+
+API_KEY = "AIzaSyDgtJZg8o9fYUlJm9xeYNkRwzQ2nbZiHQI"   # Enter your API key here
 genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel('gemini-pro')
