@@ -5,8 +5,8 @@ This is like a breakout board for the channel. This one piece of code transfers 
 ---
 
 - [ ] Talk to the sequencer
-- [ ] Talk to the terminal GUI
+- [x] Talk to the terminal GUI
 
 ---
 
-Talk means both server-client both or single channel? --> decide this.
+Talk means both server-client both or single channel.
