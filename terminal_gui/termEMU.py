@@ -27,7 +27,7 @@ class ModernTerminal(QWidget):
         
     def init_ui(self):
         # Set up the main window
-        self.setWindowTitle("Modern Terminal")
+        self.setWindowTitle("Terminal")
         self.setGeometry(100, 100, 800, 500)
         
         # Set up the main layout
