@@ -1,6 +1,6 @@
 # Terminal GUI
 
-This is the GUI made using pyQT5. This establishes comms with the [Backend endpoint](./Be/commsBack.py). 
+This is the GUI made using pyQT5. This establishes comms with the [Backend endpoint](./Backend_endpoint/commsBack.py). 
 
 ![terminal image](./images/terminal.png)
 ---
