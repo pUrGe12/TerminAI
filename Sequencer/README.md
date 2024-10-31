@@ -24,6 +24,7 @@ What works so far:
 - [x] The client is able to receive history
 - [ ] The client gets the right things from history (that is, the GPT doesn't need ID and all)
 - [ ] The broadcaster is able to add to the database based on the response from the client
+- [ ] Establish comms with breakout 
 
 Write same code for all clients, change the GPT's prompt.
 
