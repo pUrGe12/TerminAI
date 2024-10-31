@@ -8,7 +8,7 @@ Functionality
 The response will either be a binary or a tertiary, no more that than.
 
 - [ ] Connect to supabase and push the feedback.
-- [ ] Before broadcasting, add pull from database and add that to the user's message, explicitly mentioning it as `history`.
+- [ ] Before broadcasting, pull from database and add that to the user's message, explicitly mentioning it as `history`.
 
 ---
 
