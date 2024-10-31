@@ -7,20 +7,25 @@ from queue import Queue
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
 
-name = 'client_5003'
-
-API_KEY = ""   # Enter your API key here
+API_KEY = "AIzaSyDgtJZg8o9fYUlJm9xeYNkRwzQ2nbZiHQI"   # Enter your API key here
 genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel('gemini-pro')
 chat = model.start_chat(history=[])
 
 class ReceiverSender:
+    '''
+    It has two running queues, one for messages and one for the history. When it receives the history information from the broadcaster, it adds the list in this queue.
+    
+    There is only going to be one value in the queue at a time, cause we can always get() and clean it up. We still use queues cause its faster
+    '''
+
     def __init__(self, listen_port, broadcaster_port):
         self.listen_port = listen_port
         self.broadcaster_port = broadcaster_port
         self.running = True
         self.message_queue = Queue()
+        self.history_queue = Queue()
         
         # Create UDP socket for receiving broadcasts
         self.receive_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -37,10 +42,11 @@ class ReceiverSender:
         self.listener_thread.daemon = True
         self.listener_thread.start()
     
-    def send_message(self, message):
-        """Send a message to the broadcaster"""
+    def send_message(self, message, sysbool):
+        """ send message to the broadcaster """
         data = {
             'message': message,
+            'sysbool': sysbool,
             'timestamp': time.strftime('%H:%M:%S'),
             'sender': f'Node-{self.listen_port}'
         }
@@ -56,10 +62,12 @@ class ReceiverSender:
         print(f"\nReceived broadcast from {addr}: {received_data['message']}")
         print(f"Timestamp: {received_data['timestamp']}")
         print(f"Sender: {received_data['sender']}")
+        print(f"History: {received_data['history']}")
         
         # Don't process messages from ourselves
         if received_data['sender'] != f'Node-{self.listen_port}':
             self.message_queue.put(received_data['message'])
+            self.history_queue.put(received_data['history'])
     
     def listen_for_broadcasts(self):
         """Listen for incoming broadcast messages"""
@@ -86,14 +94,33 @@ class ReceiverSender:
         self.receive_socket.close()
         self.send_socket.close()
 
-def GPT_response(prompt):
+def GPT_response(prompt, history):
     """Generate response using GPT for the given prompt"""
-    
     prompt_init = f"""
-    You will be given a prompt, figure out if the user is a man. 
-    Your output needs to be either "yes", "no", "null". 
-    You should say "null" when you can't determine the gender based on the prompt. 
-    This is the prompt: {prompt}"""
+    You will be given a prompt and a history of prompts. Your task is to do this:
+
+    1. Find out if the user is a man or not.
+    2. Find out if the user wants a system level task performed.
+
+    System level tasks are those tasks that would require the os.system() function call in python. Checking if the user wants coffee is not a system level task.
+
+    This is the history structure.
+
+    1. prompt - This is the user's prompt.
+    2. System_boolean - This is the system boolean as explained above.
+    3. M_func - This is what the model which processed and gave output for this prompt was trying to do.
+
+    You should look at the history and determine if the user is a man using that, if the current prompt is hard to understand.
+
+    Your output needs to be exactly formatted like this:
+
+        SysBool: <value>, Answer: <value>
+
+    where 'SysBool' is the system boolean value (in your case, this is always 'False') and 'Answer' is the answer to the user being a man. The answer must be either 'yes' or 'no'
+
+    This is the history: {history}
+    This is the prompt: {prompt}
+    """
 
     try:
         output_init = ''
@@ -106,7 +133,11 @@ def GPT_response(prompt):
         for chunk in response_init:
             if chunk.text:
                 output_init += str(chunk.text)
-        return output_init
+        sysbool = output_init.strip().split(',')[0].split(':')[1].strip()
+        answer = output_init.strip().split(',')[1].split(':')[1].strip()
+        
+        return (sysbool, answer)
+
     except Exception as e:
         print(f"Error generating GPT response: {e}")
         return 'Try again'
@@ -122,10 +153,10 @@ if __name__ == "__main__":
             # Check for new messages in the queue
             if not receiver.message_queue.empty():
                 received_message = receiver.message_queue.get()
-                response = GPT_response(received_message)
-                if response:
-                    if "yes" in response:
-                        receiver.send_message(response)
+                history = receiver.history_queue.get()
+                (sysbool, answer) = GPT_response(received_message, history)
+                if "yes" in answer.lower():
+                    receiver.send_message(answer, sysbool)
             time.sleep(0.1)
             
     except KeyboardInterrupt:

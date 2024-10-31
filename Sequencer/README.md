@@ -15,3 +15,16 @@ The response will either be a binary or a tertiary, no more that than.
 The sequencer is the main part of the problem, responsible for `establishing communications` between the client and all the models.
 
 ![Sequencer workflow](./images/Sequencer.png)
+
+---
+
+What works so far:
+
+- [x] Broadcaster is able to query the database and send history
+- [x] The client is able to receive history
+- [ ] The client gets the right things from history (that is, the GPT doesn't need ID and all)
+- [ ] The broadcaster is able to add to the database based on the response from the client
+
+Write same code for all clients, change the GPT's prompt.
+
+Run and fix history. If there can only be 1 element in the queue, cause we're getting then why am I seeing two? CHECK THE PIC.
