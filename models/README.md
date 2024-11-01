@@ -1,8 +1,5 @@
 # Workflows
 
-For sequencer logic, go [here](./Workflow_sequencer.md)
+For sequencer logic, go [here](../Sequencer/idea/Workflow_sequencer.md)
 
-# Model comms overview
-
-
-# Model design
+For [client logic](./idea/Workflow_clients.md)

@@ -7,17 +7,24 @@ from queue import Queue
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
 
-API_KEY = "AIzaSyDgtJZg8o9fYUlJm9xeYNkRwzQ2nbZiHQI"   # Enter your API key here
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                                           GPT initializations
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+API_KEY = "AIzaSyDgtJZg8o9fYUlJm9xeYNkRwzQ2nbZiHQI"
 genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel('gemini-pro')
 chat = model.start_chat(history=[])
 
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                                         Receiver and Sender class
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 class ReceiverSender:
     '''
     It has two running queues, one for messages and one for the history. When it receives the history information from the broadcaster, it adds the list in this queue.
-    
-    There is only going to be one value in the queue at a time, cause we can always get() and clean it up. We still use queues cause its faster
+    We use queues cause its faster
     '''
 
     def __init__(self, listen_port, broadcaster_port):
@@ -27,17 +34,17 @@ class ReceiverSender:
         self.message_queue = Queue()
         self.history_queue = Queue()
         
-        # Create UDP socket for receiving broadcasts
+        # UDP socket for receiving broadcasts
         self.receive_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.receive_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.receive_socket.bind(('', self.listen_port))
         
-        # Create UDP socket for sending messages
+        # UDP socket for sending messages
         self.send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.send_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.send_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         
-        # Start listener thread
+        # listener thread
         self.listener_thread = threading.Thread(target=self.listen_for_broadcasts)
         self.listener_thread.daemon = True
         self.listener_thread.start()
@@ -89,13 +96,11 @@ class ReceiverSender:
                     print(f"\nError while listening: {e}")
     
     def close(self):
-        """Clean up resources"""
         self.running = False
         self.receive_socket.close()
         self.send_socket.close()
 
 def GPT_response(prompt, history):
-    """Generate response using GPT for the given prompt"""
     prompt_init = f"""
     You will be given a prompt and a history of prompts. Your task is to do this:
 
@@ -143,14 +148,12 @@ def GPT_response(prompt, history):
         return 'Try again'
 
 if __name__ == "__main__":
-    LISTEN_PORT = 5001  # Port to listen for broadcasts
-    BROADCASTER_PORT = 5000  # Port to send messages to broadcaster
+    LISTEN_PORT = 5001  # listen for broadcasts
+    BROADCASTER_PORT = 5000 
     
     receiver = ReceiverSender(LISTEN_PORT, BROADCASTER_PORT)
-    
     try:
         while True:
-            # Check for new messages in the queue
             if not receiver.message_queue.empty():
                 received_message = receiver.message_queue.get()
                 history = receiver.history_queue.get()
