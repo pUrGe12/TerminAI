@@ -82,7 +82,7 @@ We could've just added to database using the models, but I didn't want to burden
 		            except json.JSONDecodeError:
 		                print(f"\nReceived malformed data from {addr}")
 		            except Exception as e:
-		                if self.running:                                        # only print error if we're still running
+		                if self.running:
 		                    print(f"\nError while listening: {e}")
 
 		    def get_received_messages(self):
@@ -95,3 +95,9 @@ We could've just added to database using the models, but I didn't want to burden
 		        self.running = False
 		        self.broadcast_socket.close()
 		        self.listen_socket.close()
+
+
+Here, 
+
+>> we establish a message queue, thread the listen_for_message() method and create socket objects to use later.
+>>
