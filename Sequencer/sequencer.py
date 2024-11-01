@@ -6,7 +6,9 @@ import queue
 from supabase import create_client, Client                                  # For database adding and pulling
 from address import function_dict, address_dict                             # For getting information on the models, to add to database
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                                        Initialising the database
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 url: str = "https://yvcmpdgbeopnscegtjoh.supabase.co"
 key: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2Y21wZGdiZW9wbnNjZWd0am9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzAzNjAxMzUsImV4cCI6MjA0NTkzNjEzNX0.n2FKKYLLO_IhtWtjsZfNSVic5mnuXmu5dCA9mbk1SfU"
@@ -77,7 +79,6 @@ class BroadcasterListener:
         print(f"sysbool: {received_data['sysbool']}")
         print("\nEnter message to broadcast (or 'quit' to exit): ", end='', flush=True)
         
-        # Add the received data to the queue
         self.message_queue.put(received_data)
 
     def listen_for_messages(self):
@@ -89,7 +90,9 @@ class BroadcasterListener:
             try:
                 data, addr = self.listen_socket.recvfrom(1024)
                 received_data = json.loads(data.decode('utf-8'))
-                # Use a separate thread to handle the received message
+                
+                # Separate thread to handle the received message
+
                 print_thread = threading.Thread(
                     target=self.print_received_message,
                     args=(addr, received_data)
@@ -98,37 +101,26 @@ class BroadcasterListener:
             except json.JSONDecodeError:
                 print(f"\nReceived malformed data from {addr}")
             except Exception as e:
-                if self.running:  # Only print error if we're still running
+                if self.running:                                        # only print error if we're still running
                     print(f"\nError while listening: {e}")
 
     def get_received_messages(self):
-        """Retrieve all messages currently in the queue."""
+        """
+        Retrieve all messages currently in the queue. get() pops and returns, eventually emptying the queue.
+        """
         messages = []
         while not self.message_queue.empty():
             messages.append(self.message_queue.get())
         return messages
     
     def close(self):
-        """Clean up and close all connections."""
         self.running = False
         self.broadcast_socket.close()
         self.listen_socket.close()
 
-
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#               
+#                                                                     Database querying and adding functions
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-def get_prompt():
-    """
-    This function is being used to get input from the breakout code. We've created a socket connection between these two and it simply recieves data.
-    
-    (for the time being, we've just using input)
-    """
-    try:
-        return input("Enter message to broadcast (or 'quit' to exit): ")
-    except EOFError:
-        return 'quit'
 
 def get_history():
     """
@@ -147,7 +139,21 @@ def add_history(name, system_boolean, prompt):
     """
     Info = {'M_addr': f"{address_dict.get(name)}", 'SysBool': f"{system_boolean}", 'M_func': f"{function_dict.get(name)}", 'Prompt': f"{prompt}"}
     response = supabase.table('History').insert(Info).execute()
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                                     comms with breakout and start
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def get_prompt():
+    """
+    This function is being used to get input from the breakout code. We've created a socket connection between these two and it simply recieves data.
     
+    (for the time being, we've just using input)
+    """
+    try:
+        return input("Enter message to broadcast (or 'quit' to exit): ")
+    except EOFError:
+        return 'quit'
 
 if __name__ == "__main__":
 
