@@ -26,6 +26,8 @@ The GPT models perform the actual task of content generation (if that is the req
 
 In short, each extraction model is linked to a specific GPT model. If that extraction model ignites, then its linked GPT model will activate and do the task.
 
+This linkage is performed via a breakout.
+
 For system level changes, they basically "call" in some sense a function that does that. I am thinking bash or python, either works, but the idea is,
  
 - We'll have different files for performing different system level tasks (these can be bash scripts or python scripts, either works)

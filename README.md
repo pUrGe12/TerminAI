@@ -7,6 +7,8 @@
 
 **A terminal with AI capabilities.** Forget commands, just tell it what it do!
 
+Check out the terminal [here](./terminal_gui/README.md)!
+
 ---
 
 For a better understanding of the structure refer the [workflow](./idea/README.md)
@@ -19,11 +21,12 @@ This is the basic architecture. The more detailed ones will be present in the re
 
 Pending work:
 
-- [x] Write the workflow properly. Don't leave anything ambiguous.
-- [x] Write sockets between GUI and Backend endpoint (`Be`)
-- [ ] Write sockets between `Be` and `sequencer`.
-- [ ] Complete sequencer.
-- [ ] Update README.md
-- [ ] Make the repository navigable.
+- [x] Write the workflows properly. Don't leave anything ambiguous.
+- [ ] Complete [sequencer](./Sequencer). The pending work will be listed there.
+- [ ] Complete [breakoutGPT](./BreakoutGPT). The pending work will be listed there.
+- [ ] Write all extraction models. This will take some time.
+- [ ] Complete GPT layer. 
+
+Complete means, in a ready to work **right now** condition.
 
 ---
