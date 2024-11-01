@@ -8,13 +8,21 @@ from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
 from address import prompt_dict
 
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                                           GPT initializations
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 NAME = 'client_5003'
 
-API_KEY = "AIzaSyDgtJZg8o9fYUlJm9xeYNkRwzQ2nbZiHQI"   # Enter your API key here
+API_KEY = "AIzaSyDgtJZg8o9fYUlJm9xeYNkRwzQ2nbZiHQI"
 genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel('gemini-pro')
 chat = model.start_chat(history=[])
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                                         Receiver and Sender class
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 class ReceiverSender:
     '''

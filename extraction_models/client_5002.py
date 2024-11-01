@@ -11,9 +11,10 @@ from address import prompt_dict
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                                           GPT initializations
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 NAME = 'client_5002'
 
-API_KEY = "AIzaSyDgtJZg8o9fYUlJm9xeYNkRwzQ2nbZiHQI"   # Enter your API key here
+API_KEY = ""
 genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel('gemini-pro')
