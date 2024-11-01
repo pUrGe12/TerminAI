@@ -4,9 +4,6 @@ This is like a breakout board for the channel. This one piece of code transfers 
 
 ---
 
-- [ ] Talk to the sequencer
-- [x] Talk to the terminal GUI
-
----
-
-Talk means both server-client both or single channel.
+- [ ] Send the prompt to the sequencer
+- [x] Send and receive prompts from the terminal GUI
+- [ ] Receive response from `Model S`
