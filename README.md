@@ -11,7 +11,7 @@
 
 For a better understanding of the structure refer the [workflow](./idea/README.md)
 
-This is the architecture
+This is the basic architecture. The more detailed ones will be present in the respective directories.
 
 ![Architecture](./idea/TerminAI.png)
 
