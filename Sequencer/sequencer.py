@@ -3,8 +3,8 @@ import threading
 import time
 import json
 import queue
-from supabase import create_client, Client                                  # For database adding and pulling
-from address import function_dict, address_dict                             # For getting information on the models, to add to database
+from supabase import create_client, Client                                     # For database adding and pulling
+from address import function_dict                                              # For getting information on the models, to add to database
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                                        Initialising the database
@@ -133,7 +133,7 @@ def add_history(name, system_boolean, prompt):
 
     This is to be called after querying the database, so that the current input is not regarded as history.
     """
-    Info = {'M_addr': f"{address_dict.get(name)}", 'SysBool': f"{system_boolean}", 'M_func': f"{function_dict.get(name)}", 'Prompt': f"{prompt}"}
+    Info = {'SysBool': f"{system_boolean}", 'M_func': f"{function_dict.get(name)}", 'Prompt': f"{prompt}"}
     response = supabase.table('History').insert(Info).execute()
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -163,12 +163,15 @@ if __name__ == "__main__":
             if prompt.lower() == 'quit':
                 break
             broadcaster.broadcast_message(prompt, history)
-            if not broadcaster.message_queue.empty():
-                messages = broadcaster.message_queue.get()
+            try:
+                messages = broadcaster.message_queue.get(timeout=5)  # Waits up to 5 seconds for a message
                 system_boolean = messages['sysbool']
                 name = f"client_{messages['sender'].split('-')[1]}"
                 add_history(name, system_boolean, prompt)
-                print('added history')  
+                print('added history')
+            except queue.Empty:
+                # Timeout after 5 seconds, continue if no message was received
+                print('No message received within 5 seconds. Message queue is empty.')
 
     except KeyboardInterrupt:
         print("\nShutting down...")
