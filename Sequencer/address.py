@@ -27,9 +27,6 @@ prompt_dict = {
 				        SysBool: <value>, Answer: <value>
 
 				    where 'SysBool' is the system boolean value (in your case, this is always 'False') and 'Answer' is the answer to the user wanting coffee. The answer must be either 'yes' or 'no'
-
-				    This is the history: {history}
-				    This is the prompt: {prompt}
 				    """,
 
 	"client_5002": f"""
@@ -53,10 +50,8 @@ prompt_dict = {
 				        SysBool: <value>, Answer: <value>
 
 				    where 'SysBool' is the system boolean value (in your case, this is always 'False') and 'Answer' is the answer to the user wanting tea. The answer must be either 'yes' or 'no'
-
-				    This is the history: {history}
-				    This is the prompt: {prompt}
 				    """,
+
 	"client_5003": f"""
 				    You will be given a prompt and a history of prompts. Your task is to do this:
 
@@ -78,8 +73,5 @@ prompt_dict = {
 				        SysBool: <value>, Answer: <value>
 
 				    where 'SysBool' is the system boolean value (in your case, this is always 'False') and 'Answer' is the answer to the user being a man. The answer must be either 'yes' or 'no'
-
-				    This is the history: {history}
-				    This is the prompt: {prompt}
 				    """
 }

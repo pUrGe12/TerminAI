@@ -106,7 +106,10 @@ class ReceiverSender:
 
 def GPT_response(prompt, history):
     """Generate response using GPT for the given prompt"""
-    prompt_init = prompt_dict.get(NAME)
+    prompt_init = prompt_dict.get(NAME) + f"""
+                    This is the history: {history}
+                    This is the prompt: {prompt}
+                """
 
     try:
         output_init = ''

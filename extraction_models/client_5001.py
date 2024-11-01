@@ -103,7 +103,10 @@ class ReceiverSender:
         self.send_socket.close()
 
 def GPT_response(prompt, history):
-    prompt_init = prompt_dict.get(NAME)
+    prompt_init = prompt_dict.get(NAME) + f"""
+                    This is the history: {history}
+                    This is the prompt: {prompt}
+                """
 
     try:
         output_init = ''
