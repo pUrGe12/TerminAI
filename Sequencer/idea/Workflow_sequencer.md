@@ -99,5 +99,7 @@ We could've just added to database using the models, but I didn't want to burden
 
 Here, 
 
->> we establish a message queue, thread the listen_for_message() method and create socket objects to use later.
->>
+- We establish a message queue, thread the `listen_for_message()` method and create socket objects to use later.
+- The `broadcast_message()` method takes in the prompt and the history and sends it over to everyone.
+
+The history that we pull from supabase has things that we don't need often, so, we'll just pass the ones that are required and important.

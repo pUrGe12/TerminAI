@@ -50,7 +50,9 @@ class BroadcasterListener:
     
     def broadcast_message(self, message, history):
         """
-        Broadcasts a message and a history list to all models.
+        Broadcasts a message and a history list to all models. The history directly pulled contains weird stuff that is not really of any sense to the models. 
+        
+        Make sure the history passed here contains only the relevant things.
         """
         
         assert isinstance(history, list), 'history is wrongly formatted'
