@@ -15,6 +15,7 @@ key: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 
 supabase: Client = create_client(url, key)
 
+TIMES_RAN = 1
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                                        Broadcasting and listening
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -105,15 +106,6 @@ class BroadcasterListener:
             except Exception as e:
                 if self.running:                                        # only print error if we're still running
                     print(f"\nError while listening: {e}")
-
-    def get_received_messages(self):
-        """
-        Retrieve all messages currently in the queue. get() pops and returns, eventually emptying the queue.
-        """
-        messages = []
-        while not self.message_queue.empty():
-            messages.append(self.message_queue.get())
-        return messages
     
     def close(self):
         self.running = False
@@ -121,15 +113,17 @@ class BroadcasterListener:
         self.listen_socket.close()
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#                                                                     Database querying and adding functions
+#                                                                              Database
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def get_history():
     """
-    This function queries supabase and gets the last five data points, and returns a list of the required parameters
+    This function queries supabase and gets the last five data points, and returns a list of the required parameters, after filtering it.
     """
-
     response = supabase.table('History').select("*").order('id', desc=True).limit(5).execute().data
+    
+    keys_to_keep = {'SysBool', 'M_func', 'Prompt'}
+    filtered_data = [{key: dos[key] for key in dos if key in keys_to_keep} for dos in response]    
     return response
     
 def add_history(name, system_boolean, prompt):
@@ -165,8 +159,7 @@ if __name__ == "__main__":
 
     try:
         while True:
-            history = get_history()
-            prompt = get_prompt()
+            history, prompt = get_history(), get_prompt()
             if prompt.lower() == 'quit':
                 break
             broadcaster.broadcast_message(prompt, history)

@@ -1,4 +1,4 @@
-## Logic
+## Workflows
 
 For sequencer logic, go [here](./Workflow_sequencer.md)
 

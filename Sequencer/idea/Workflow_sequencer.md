@@ -85,12 +85,6 @@ We could've just added to database using the models, but I didn't want to burden
 		                if self.running:
 		                    print(f"\nError while listening: {e}")
 
-		    def get_received_messages(self):
-		        messages = []
-		        while not self.message_queue.empty():
-		            messages.append(self.message_queue.get())
-		        return messages
-		    
 		    def close(self):
 		        self.running = False
 		        self.broadcast_socket.close()
@@ -102,4 +96,50 @@ Here,
 - We establish a message queue, thread the `listen_for_message()` method and create socket objects to use later.
 - The `broadcast_message()` method takes in the prompt and the history and sends it over to everyone.
 
-The history that we pull from supabase has things that we don't need often, so, we'll just pass the ones that are required and important.
+The history that we pull from supabase has things that we don't need often, so, we'll just pass the ones that are required and important. This we filter using the `get_history()` function,
+
+		def get_history():
+		    response = supabase.table('History').select("*").order('id', desc=True).limit(5).execute().data
+		    keys_to_keep = {'SysBool', 'M_func', 'Prompt'}
+		    filtered_data = [{key: dos[key] for key in dos if key in keys_to_keep} for dos in response]    
+		    return response
+
+- It then establishes the listen_for_message() method, trying to listen from any port, on the port 5000. 
+
+> [!Note]
+> Ensure that the port you're using are not already used by others!
+
+## Understanding main
+
+This is the main code, 
+
+		if __name__ == "__main__":
+			BROADCAST_PORTS = [5000+i for i in range(1,4)]  # Ports to broadcast to, we can increase this to how much ever we want.
+			LISTEN_PORT = 5000
+			broadcaster = BroadcasterListener(BROADCAST_PORTS, LISTEN_PORT)
+			try:
+			    while True:
+			        history, prompt = get_history(), get_prompt()
+			        if prompt.lower() == 'quit':
+			            break
+			        broadcaster.broadcast_message(prompt, history)
+			        if not broadcaster.message_queue.empty():
+			            messages = broadcaster.message_queue.get()
+			            system_boolean = messages['sysbool']
+			            name = f"client_{messages['sender'].split('-')[1]}"
+			            add_history(name, system_boolean, prompt)
+			            print('added history')  
+			except KeyboardInterrupt:
+			    print("\nShutting down...")
+			finally:
+			    broadcaster.close()
+
+This is establishing the ports we need to broadcast to first, then the port to listen on.
+
+- We keep querying history and getting the prompt until the prompt is `quit`. This is kind of equivalent to `ctrl+d` in the actual terminal. 
+- Then we create an instance of the broadcaster class.
+
+Now we check if the message_queue is empty of not. Note that we're only adding anything to the message_queue in the `print_received_message()` method.
+
+After `print_received_message()` runs and the queue is processed in the main loop using `.get()`, the queue will be empty until the listen_for_messages() thread receives and processes a new message. If no new messages are received, the queue will remain empty, and `if not broadcaster.message_queue.empty()` will evaluate to `False`.
+
