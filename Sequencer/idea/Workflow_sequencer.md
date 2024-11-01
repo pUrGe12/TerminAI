@@ -139,7 +139,8 @@ This is establishing the ports we need to broadcast to first, then the port to l
 - We keep querying history and getting the prompt until the prompt is `quit`. This is kind of equivalent to `ctrl+d` in the actual terminal. 
 - Then we create an instance of the broadcaster class.
 
-Now we check if the message_queue is empty of not. Note that we're only adding anything to the message_queue in the `print_received_message()` method.
+Now we check if the message_queue is empty of not. Note that we're only adding anything to the message_queue in the `print_received_message()` method. So, if it has atleast one message, this block of code executes.
 
 After `print_received_message()` runs and the queue is processed in the main loop using `.get()`, the queue will be empty until the listen_for_messages() thread receives and processes a new message. If no new messages are received, the queue will remain empty, and `if not broadcaster.message_queue.empty()` will evaluate to `False`.
 
+The queue will at max have only one element at a time. Because, as soon as it has one, the main loop will `get` that and pop it. That is how we implement history.
