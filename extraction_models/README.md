@@ -23,7 +23,7 @@ Now this is the **tricky part** because we can either have another breakout resp
 > [!TIP]
 > Having a breakout is always better and costs nothing. Don't add too much logic in one part. Diversify.
 
-- [ ] Create breakout for comms with GPT layer.
+- [ ] Create comms with breakout.
 
 For sequencer logic, head over [here](../Sequencer/idea/Workflow_sequencer.md)
 
