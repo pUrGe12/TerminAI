@@ -6,12 +6,22 @@ import sys
 from queue import Queue
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
+from address import prompt_dict
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                                           GPT initializations
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+NAME = 'client_5002'
 
 API_KEY = "AIzaSyDgtJZg8o9fYUlJm9xeYNkRwzQ2nbZiHQI"   # Enter your API key here
 genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel('gemini-pro')
 chat = model.start_chat(history=[])
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                                         Receiver and Sender class
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 class ReceiverSender:
     '''
@@ -96,31 +106,7 @@ class ReceiverSender:
 
 def GPT_response(prompt, history):
     """Generate response using GPT for the given prompt"""
-    prompt_init = f"""
-    You will be given a prompt and a history of prompts. Your task is to do this:
-
-    1. Find out if the user wants tea or not.
-    2. Find out if the user wants a system level task performed.
-
-    System level tasks are those tasks that would require the os.system() function call in python. Checking if the user wants coffee is not a system level task.
-
-    This is the history structure.
-
-    1. prompt - This is the user's prompt.
-    2. System_boolean - This is the system boolean as explained above.
-    3. M_func - This is what the model which processed and gave output for this prompt was trying to do.
-
-    You should look at the history and determine if the user wants tea using that, if the current prompt is hard to understand.
-
-    Your output needs to be exactly formatted like this:
-
-        SysBool: <value>, Answer: <value>
-
-    where 'SysBool' is the system boolean value (in your case, this is always 'False') and 'Answer' is the answer to the user wanting tea. The answer must be either 'yes' or 'no'
-
-    This is the history: {history}
-    This is the prompt: {prompt}
-    """
+    prompt_init = prompt_dict.get(NAME)
 
     try:
         output_init = ''
@@ -143,14 +129,13 @@ def GPT_response(prompt, history):
         return 'Try again'
 
 if __name__ == "__main__":
-    LISTEN_PORT = 5002  # Port to listen for broadcasts
-    BROADCASTER_PORT = 5000  # Port to send messages to broadcaster
+    LISTEN_PORT = 5002  # listen for broadcasts
+    BROADCASTER_PORT = 5000 
     
     receiver = ReceiverSender(LISTEN_PORT, BROADCASTER_PORT)
     
     try:
         while True:
-            # Check for new messages in the queue
             if not receiver.message_queue.empty():
                 received_message = receiver.message_queue.get()
                 history = receiver.history_queue.get()
