@@ -2,6 +2,8 @@
 
 Here is the exact explanation, point to point details, of what is happening with the sequencer.
 
+---
+
 :x: It has a socket connection with the breakout. It recieves user's prompt from there. It only needs to receive from the breakout and not send anything back.
 
 :heavy_check_mark:  It broadcasts the user's input to all the models, at the same time. :relieved:
@@ -143,4 +145,6 @@ Now we check if the message_queue is empty of not. Note that we're only adding a
 
 After `print_received_message()` runs and the queue is processed in the main loop using `.get()`, the queue will be empty until the listen_for_messages() thread receives and processes a new message. If no new messages are received, the queue will remain empty, and `if not broadcaster.message_queue.empty()` will evaluate to `False`.
 
-The queue will at max have only one element at a time. Because, as soon as it has one, the main loop will `get` that and pop it. That is how we implement history.
+The queue will at max have only one element at a time. Because, as soon as it has one, the main loop will `get` that and pop it. That is how we implement history.	
+
+---
