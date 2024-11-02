@@ -7,6 +7,7 @@ from queue import Queue
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
 from address import prompt_dict
+from APIKEYS import apikey_dict
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                                           GPT initializations
@@ -14,7 +15,7 @@ from address import prompt_dict
 
 NAME = 'client_5002'
 
-API_KEY = ""
+API_KEY = str(apikey_dict.get('gemini_key'))
 genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel('gemini-pro')

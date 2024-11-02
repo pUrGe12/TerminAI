@@ -9,7 +9,7 @@
 
 Check out the terminal [here](./terminal_gui/README.md)!
 
----
+## The structure
 
 For a better understanding of the structure refer the [workflow](./idea/README.md)
 
@@ -33,5 +33,32 @@ Pending work:
 one more thing,
 
 - [ ] Add links to [workflow](./idea/README.md) and make it readable.
+
+---
+
+## Installing
+
+To install the necessary dependencies, use the following command
+
+    pip install -r requirements.txt
+
+Since, I don't have a huge database, you will need to set up your own in [supabase](https://supabase.com/). This better because now its fully personalised for you.
+
+### Steps to setup the database
+
+1. Head over to [supabase](https://supabase.com/). Create a new project.
+2. You will receive a `URL` and a `key`. Place those in [sequencer](./Sequencer/sequencer.py) in the approriate spot (it has been demarcated for you).
+3. Create a table with the name `History`.
+
+And you're good to proceed.
+
+### Adding API keys
+
+To run the models you will need an API key. 
+
+1. Here over to [google gemini](https://ai.google.dev/gemini-api/docs/api-key) and get your API key.
+2. Place your API key in the [API keys file](./extraction_models/APIKEYS.py). The exact spot has been demarcated for you.
+
+And you're good to go!
 
 ---
