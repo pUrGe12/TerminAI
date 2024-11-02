@@ -28,7 +28,8 @@ This is the basic architecture, it is not very precise. The more detailed ones w
 Pending work:
 
 - [x] Write the workflows properly. Don't leave anything ambiguous.
-- [ ] Complete [sequencer](./Sequencer). The pending work will be listed there.
+- [x] Complete [sequencer](./Sequencer). The pending work will be listed there.
+- [ ] Complete [endpoint](./Backend_endpoint). The pending work will be listed there.  
 - [ ] Complete [breakoutGPT](./BreakoutGPT). The pending work will be listed there.
 - [ ] Write all extraction models. This will take some time.
 - [ ] Complete GPT layer.

@@ -1,6 +1,6 @@
 # place your API key here
 apikey_dict = {
-	"gemini_key": "" 											
+	"gemini_key": "AIzaSyDgtJZg8o9fYUlJm9xeYNkRwzQ2nbZiHQI" 											
 }
 
 # place your Supabase keys here
