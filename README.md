@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/Code-Bash-informational?style=flat&logo=Bash&color=yellow" alt="bash" />
 </p>
 
-**A terminal with AI capabilities.** Forget commands, just tell it what it do!
+**A terminal with AI capabilities.** Forget commands, just tell it what it do! A step towards AIOS.
 
 Check out the terminal [here](./terminal_gui/README.md)!
 
