@@ -66,3 +66,13 @@ To run the models you will need an API key.
 And you're good to go!
 
 ---
+
+## PART A
+
+Check out [part A](./PartA_backend). This is essentially the main communcations part. The exact sequence is present in that respective directory
+
+For an understanding of the communications in Part A, refer to this image, 
+
+![part A image](./PartA_backend/images/PART_A_BACKEND.png)
+
+---
