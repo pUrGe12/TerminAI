@@ -16,7 +16,7 @@ Check out the terminal [here](./terminal_gui/README.md)!
 
 For a better understanding of the structure refer the [workflow](./idea/README.md)
 
-This is the basic architecture, it is not very precise. The more detailed ones will be present in the respective directories.
+This is the architecture.
 
 ![Architecture](./idea/TerminAI.png)
 
