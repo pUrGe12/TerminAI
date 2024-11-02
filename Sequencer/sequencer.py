@@ -5,19 +5,15 @@ import json
 import queue
 from supabase import create_client, Client                                     # For database adding and pulling
 from address import function_dict                                              # For getting information on the models, to add to database
+from api_keys import supabase_key_dict
 
-# --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#                                                                        Initialising the database
-# --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Add your URL and Key here
-
-url: str = "https://yvcmpdgbeopnscegtjoh.supabase.co"
-key: str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2Y21wZGdiZW9wbnNjZWd0am9oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzAzNjAxMzUsImV4cCI6MjA0NTkzNjEzNX0.n2FKKYLLO_IhtWtjsZfNSVic5mnuXmu5dCA9mbk1SfU"
+url: str = str(supabase_key_dict.get('url'))
+key: str = str(supabase_key_dict.get('key'))
 
 supabase: Client = create_client(url, key)
 
 TIMES_RAN = 1
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                                        Broadcasting and listening
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
