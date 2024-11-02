@@ -7,7 +7,7 @@ from queue import Queue
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
 from address import prompt_dict
-from APIKEYS import apikey_dict
+from api_keys import apikey_dict
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                                           GPT initializations
