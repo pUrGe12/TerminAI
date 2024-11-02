@@ -52,4 +52,4 @@ We'll be using some light-weight models in the extraction layers, and LLMs like 
 
 ## How will parallel execution work?
 
-hmm.. I'll figure it out.
+Use a broadcaster, and broadcast the message so that each model picks it up at relatively the same time.
