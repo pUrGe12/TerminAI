@@ -1,4 +1,4 @@
-from Ex_address import function_dict
+from concurrent.futures import ThreadPoolExecutor                           # Each thread manages its own socket, avoiding bottlenecks in comms.
 import socket
 import json
 import queue
@@ -16,10 +16,6 @@ class Listener65032:
         self.receive_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.receive_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.receive_socket.bind(('127.0.0.1', self.port))
-
-        # UDP socket for sending messages
-        self.send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.send_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
         # Start a thread for processing messages
         self.processor_thread = threading.Thread(target=self.process_output)
@@ -47,58 +43,41 @@ class Listener65032:
                 if self.running:
                     print(f"\nError while listening: {e}")
 
-    def process_output(self):
+    def process_and_send(self):
         """
-        This is the parent function. It processes the data recieved and sends it to the relevant port (that is, the relevant GPT model)
-
-        Modify the different processing functions, add if necessary, to suit the needs.
+        Checks the sysbool value and sends the message to the relevant set of ports.
         """
         while self.running:
-            if not self.message_queue.empty():
+            if not self.prompt_queue.empty():
                 prompt = self.prompt_queue.get()
-                model = self.model_queue.get()
-                sysbool = self.sysbool_queue.get()
+                sysbool = self.sysbool_queue.get().lower()  # Convert to lowercase for consistency
 
-                m_func = function_dict.get(model_queue)
+                # Define ports based on sysbool value
+                target_ports = [65011, 65012, 65013] if sysbool == 'true' else [65014, 65015]
 
-                processed_message = self.process_message(prompt, sysbool, m_func)
-                target_port = self.determine_port(processed_message)
-                
-                if target_port:
-                    self.send_to_port(processed_message, received_data['sysbool'], target_port)
+                # Send message to all relevant ports using ThreadPoolExecutor for parallel sending
+                with ThreadPoolExecutor(max_workers=len(target_ports)) as executor:
+                    for port in target_ports:
+                        executor.submit(self.send_to_port, prompt, port)
 
-    def process_message(self, user_prompt, sysbool, model_function):
-        '''
-        Process the message, based on the sysbool value, prompt and the model function.
-        '''
-        pass
-
-    def determine_port(self, processed_message):
-        '''
-        Which port to send based on the processed message.
-        '''
-        pass
-
-    def send_to_port(self, message, sysbool, port):
+    def send_to_port(self, message, port):
         """
-        Send the processed message to the specified port
+        Send the message to the specified port.
         """
         data = {
-            'message': message,
-            'sysbool': sysbool,
+            'prompt': message,
             'sender': f'Listener-{self.port}'
         }
         encoded_data = json.dumps(data).encode('utf-8')
         try:
             self.send_socket.sendto(encoded_data, ('127.0.0.1', port))
-            print(f"\nSent processed message to port {port}: {message}")
+            print(f"\nSent message to port {port}: {message}")
         except Exception as e:
             print(f"\nError sending to port {port}: {e}")
 
     def close(self):
         self.running = False
         self.receive_socket.close()
-        self.send_socket.close()
 
 if __name__ == "__main__":
     listener = Listener65032()

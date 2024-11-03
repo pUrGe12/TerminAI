@@ -77,3 +77,32 @@ Check out [part A](./PartA_backend). This is essentially the main communcations 
 For an understanding of the communications in Part A, refer the [workflow](./PartA_backend/workflow.md)
 
 ---
+
+
+BRUH!!!
+
+1. You don't need a broadcaster in the sequencer. Why? Because the only goal of the extraction layer is to figure out if there is a system level change required or not.
+2. We will still add history and all to the message, just not broadcast it to multiple models, rather keep only 1 model there.
+3. This 1 model's entire job is to identify if there is a system level change needed or not.
+4. After it has identified, we will give feedback to the sequencer in the same manner.
+
+This time, in history we will add,
+
+- prompt
+- sysbool
+- work_summary (a short snippet of what work was performed)
+
+We will append this to the history, in case the user enters multiline prompts that all require system level changes.
+
+5. After it has identified, it will by itself, send it to breakout, which will send it to the relevant ports for system and non-system.
+6. The breakout will broadcast it to the GPT layer. These are less general models like
+
+- file operations (opening, writing file etc)
+- operating system operations (changing brightness, killing processes, changing permissions)
+- application level operations (starting a browser, searching for a specific thing, closing a certain software, using a specific software)
+- network level operations (switching wifi bluetooth on and off, checking connected devices via USB)
+- installing operations (new software, pip installs, sudo apt-gets)
+
+7. These will result in some output. Then we'll have a bunch of bash commands under that. We'll give another LLM these commands, tell it to figure out the right one to do what we want to do, and use those?
+
+Something like that. Will sort the last one out later.
