@@ -27,6 +27,11 @@ This is the first half of the process. The following image will clarify exactly 
 
 - [ ] Check in the `main` function, if the self.message_queue.get(timeout=5) is waiting for completion rather than broadcasting the data it gets right away.
 
-> fix?
+> fix? We'll see about that later.
 
 --- 
+
+> [!NOTE]
+> Running the clients won't work because you will first need to run the GPT Breakout code.
+
+---
