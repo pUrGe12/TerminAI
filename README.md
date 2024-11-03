@@ -18,10 +18,6 @@ For a better understanding of the structure refer the [workflow](./idea/README.m
 
 This is the old architecture.
 
-![Architecture](./idea/oldIdea/TerminAI.png)
-
-This is the new architecture. Simplicity is the ultimate sophistication.
-
 ![Architecture](./idea/TerminAI.png)
 
 ---
