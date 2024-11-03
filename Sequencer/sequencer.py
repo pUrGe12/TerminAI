@@ -4,7 +4,7 @@ import time
 import json
 import queue
 from supabase import create_client, Client                                     # For database adding and pulling
-from address import function_dict                                              # For getting information on the models, to add to database
+from Ex_address import function_dict                                              # For getting information on the models, to add to database
 from api_keys import supabase_key_dict
 
 url: str = str(supabase_key_dict.get('url'))

@@ -6,7 +6,7 @@ import sys
 from queue import Queue
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
-from address import prompt_dict
+from Ex_address import prompt_dict
 from api_keys import apikey_dict
 
 NAME = 'client_5002'

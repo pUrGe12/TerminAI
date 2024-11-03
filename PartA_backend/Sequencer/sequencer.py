@@ -4,7 +4,7 @@ import time
 import json
 import queue
 from supabase import create_client, Client                                     # For database adding and pulling
-from address import function_dict                                              # For getting information on the models, to add to database
+from Ex_address import function_dict                                              # For getting information on the models, to add to database
 from api_keys import supabase_key_dict
 
 url: str = str(supabase_key_dict.get('url'))
@@ -157,7 +157,7 @@ def get_history():
     """
     response = supabase.table('History').select("*").order('id', desc=True).limit(5).execute().data
     
-    keys_to_keep = {'SysBool', 'M_func', 'Prompt'}
+    keys_to_keep = {'SysBool', 'Ex_M_func', 'Prompt'}
     filtered_data = [{key: dos[key] for key in dos if key in keys_to_keep} for dos in response]    
     return response
     
@@ -168,7 +168,7 @@ def add_history(name, system_boolean, prompt):
 
     This is to be called after querying the database, so that the current input is not regarded as history.
     """
-    Info = {'SysBool': f"{system_boolean}", 'M_func': f"{function_dict.get(name)}", 'Prompt': f"{prompt}"}
+    Info = {'SysBool': f"{system_boolean}", 'Ex_M_func': f"{function_dict.get(name)}", 'Prompt': f"{prompt}"}
     response = supabase.table('History').insert(Info).execute()
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
