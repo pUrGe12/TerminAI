@@ -51,7 +51,7 @@ Since, I don't have a huge database, you will need to set up your own in [supaba
 ### Steps to setup the database
 
 1. Head over to [supabase](https://supabase.com/). Create a new project.
-2. You will receive a `URL` and a `key`. Place those in [sequencer](./Sequencer/sequencer.py) in the approriate spot (it has been demarcated for you).
+2. You will receive a `URL` and a `key`. Place those in [API Keys file](./Sequencer/api_keys.py) in the approriate spot (it has been demarcated for you).
 3. Create a table with the name `History`.
 
 And you're good to proceed.
@@ -61,9 +61,11 @@ And you're good to proceed.
 To run the models you will need an API key. 
 
 1. Here over to [google gemini](https://ai.google.dev/gemini-api/docs/api-key) and get your API key.
-2. Place your API key in the [API keys file](./extraction_models/APIKEYS.py). The exact spot has been demarcated for you.
+2. Place your API key in the [API keys file](./extraction_models/api_keys.py). The exact spot has been demarcated for you.
 
 And you're good to go!
+
+For modularity's sake, you may wish to add these keys in [the home](./api_keys.py) API file as well. :smile:
 
 ---
 
