@@ -69,7 +69,6 @@ class ReceiverSender:
         data = {
             'message': message,
             'sysbool': sysbool,
-            'timestamp': time.strftime('%H:%M:%S'),
             'sender': f'Node-{self.listen_port}',
             'prompt': prompt
         }

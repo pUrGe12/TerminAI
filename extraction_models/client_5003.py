@@ -9,10 +9,6 @@ import google.generativeai as genai
 from address import prompt_dict
 from apikeys import apikey_dict
 
-# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#                                                                           GPT initializations
-# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 NAME = 'client_5003'
 
 API_KEY = str(apikey_dict.get('gemini_key'))
@@ -20,10 +16,6 @@ genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel('gemini-pro')
 chat = model.start_chat(history=[])
-
-# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#                                                                         Receiver and Sender class
-# -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 class ReceiverSender:
     '''
@@ -68,6 +60,24 @@ class ReceiverSender:
             print(f"\nSent to broadcaster: {message}")
         except Exception as e:
             print(f"\nError sending message: {e}")
+
+    def send_to_GPT_breakout(self, message, sysbool, prompt, listener_port=65032):
+        """
+        Send message to breakout GPT via port 65032
+        """
+        data = {
+            'message': message,
+            'sysbool': sysbool,
+            'sender': f'Node-{self.listen_port}',
+            'prompt': prompt
+        }
+        encoded_data = json.dumps(data).encode('utf-8')
+        try:
+            self.send_socket.sendto(encoded_data, ('127.0.0.1', listener_port))
+            print(f"\nSent to additional listener on port {listener_port}: {message}")
+        except Exception as e:
+            print(f"\nError sending to additional listener: {e}")
+
 
     def print_received_message(self, addr, received_data):
         """Print received message and add it to the queue"""
@@ -141,13 +151,13 @@ if __name__ == "__main__":
     
     try:
         while True:
-            # Check for new messages in the queue
             if not receiver.message_queue.empty():
-                received_message = receiver.message_queue.get()
+                user_prompt = receiver.message_queue.get()
                 history = receiver.history_queue.get()
-                (sysbool, answer) = GPT_response(received_message, history)
+                (sysbool, answer) = GPT_response(user_prompt, history)
                 if "yes" in answer.lower():
                     receiver.send_message(answer, sysbool)
+                    receiver.send_to_GPT_breakout(answer, sysbool, user_prompt)
             time.sleep(0.1)
             
     except KeyboardInterrupt:
