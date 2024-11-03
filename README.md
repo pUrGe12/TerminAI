@@ -16,7 +16,11 @@ Check out the terminal [here](./terminal_gui/README.md)!
 
 For a better understanding of the structure refer the [workflow](./idea/README.md)
 
-This is the architecture.
+This is the old architecture.
+
+![Architecture](./idea/oldIdea/TerminAI.png)
+
+This is the new architecture. Simplicity is the ultimate sophistication.
 
 ![Architecture](./idea/TerminAI.png)
 
