@@ -35,3 +35,9 @@ What works:
 - [x] History fixed. The logic is now to wait for 5 seconds for a response before checking if the `message_queue` is empty or not. 
 
 Before, it used to immediately do that, hence always resulting in an empty queue. If we receive a message within these 5 seconds, then we immediately proceed forward.
+
+---
+
+Dilemma:
+
+- [ ] The database now has more columns, to incorporate for the GPT layer stuff as well. We will need to work out if we need to send GPT stuff as history as well.
