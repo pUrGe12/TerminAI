@@ -23,7 +23,13 @@ Now this is the **tricky part** because we can either have another breakout resp
 > [!TIP]
 > Having a breakout is always better and costs nothing. Don't add too much logic in one part. Diversify.
 
-- [ ] Create comms with breakout.
+- [x] Create comms with breakout.
+
+The models are able to send the system boolean, the user's prompt, and their own name to the breakout. **The breakout is then expected to use the name, figure out its functionality, then use the system bool and prompt to figure out where to send the message in the GPT layer**.
+
+---
+
+
 
 For sequencer logic, head over [here](../Sequencer/idea/Workflow_sequencer.md)
 
