@@ -29,6 +29,7 @@ Pending work:
 
 - [x] Write the workflows properly. Don't leave anything ambiguous.
 - [x] Complete [sequencer](./Sequencer). The pending work will be listed there.
+- [ ] Figure out the small part of sending GPT layer data in history is required or not.
 - [ ] Complete [endpoint](./Backend_endpoint). The pending work will be listed there.  
 - [ ] Complete [breakoutGPT](./BreakoutGPT). The pending work will be listed there.
 - [ ] Write all extraction models. This will take some time.
