@@ -20,13 +20,14 @@ Check out the terminal [here](./terminal_gui/README.md)!
 
 3. Now comes the sequencer. This will broadcast the message to all the models in the extraction layer. These are many in number and they are extracting what exactly the user wants, in broad terms. 
 
-I am thinking 5 extraction models,
+I am thinking 6 extraction models,
 
-    file operations (opening, writing file etc)
+    file operations (opening, writing to a file, creating a directory)
     operating system operations (changing brightness, killing processes, changing permissions)
     application level operations (starting a browser, searching for a specific thing, closing a certain software, using a specific software)
     network level operations (switching wifi bluetooth on and off, checking connected devices via USB)
     installing operations (new software, pip installs, sudo apt-gets)
+    content generation operations (any content that needs to be printed on the terminal, printed on terminal being important here. For example, greetings.)
 
 These are broad and cover most of the use cases.
 
@@ -34,46 +35,30 @@ These are broad and cover most of the use cases.
 
 5. This will be sent to the sequencer as the feedback to add to the database. 
 
-6. This will also be sent to the breakout GPT. WHAT HAPPENS HERE? 
+6. This will also be sent to the breakout GPT. This will figure out which GPT model to send the data to based on where it is coming from. `File operations` will have its own smaller GPT models, and this will figure out where to send what. 
+
+7. The smaller GPT models will basically try to generate a json type object of the necessary parameters, to fulfill the request and see which parameters are missing. The missing ones, they'll add on their own. 
+
+The breakout will broadcast this message to a certain group of ports, specific for file operations, like read, write, delete, touch, change permissions etc. There are many. The relevant ones respond with a 'yes' and therein lies bash scripts or `os commands`, whichever is more convinent that they can run based on what they do.
+
+In this case, the write will fire up, which will create a json object containing where to write and what to write. Then the functions inside, will actually do that.
+
+The model will then send this json object to model S, it will have a comprehensive history of what all has happened till now, and Model S will create a wrapper around it, beautify it and present it to the user.
+
+8. If 2 extraction models fire up (which won't be very uncommon) then both of them will send for the breakout and the breakout will figure out where to forward each message based on where it came from (that is, what the original function's function was...)
+
+Then, each will create a json object, and send that to the Model S.
+
+WHAT IF THEY ARE DEPENDENT? on each other? What if we have to write to a value that the other finds? 
+
+LETS HAVE a `concatenation model`! All json passes through the concatenation model, which looks at them all, judges if they are to be concatenated and does that (note that, the json contains the "value" that the model found, if it found anything at all). It has code to concatenate them. It will usually be do something, then based on that do something else. If there are more than 2, then we just tell the user to fuck off (for now...).
+
+
+or we don't have to hardcode at all, we'll have a python file that has functions extensively written to perform different tasks. We will import this file and take the relevant functions.
 
 ---
-IS THIS NEEDED??
----
-### The wait logic
 
-Here, in all models in the GPT layer we add a code to add to a database whatever they find, as soon as they're done executing (that is, if they answer 'yes' then it means its their job, and once they're done processing, we'll add it to a database).
-
-We'll add the following things to the database.
-
-- GPT model's function
-- Time-stamp
-- Value
-- work-summary
-
-What all this means? The `value` is the explicit thing that it computes. In this case, it will be the name of the file. It can be either something the user mentioned or didn't or something that the user wants to be computed. Each model has its own `value` to add in the `value` field. It's different things for all, but its something that piece of code computes. 
-
-The `work-summary` is just a short message explaining what the model did.
-
-As soon as they receive the broadcasted message, all models begin querying the `time-stamp` of the last added field in the database, at an interval of 1 second (can be changed). If the `current-time` - `time-stamp` is around 1 second (we can change this value in the future), then it implies that a model has just finished execution.
-
-In this case, the content generation model needs the name of the file and the directory to write content into, this will be present in the value field. It will query that, and write to it.
-
-It will then add its own entry in the database.
-
-In this case, two models will report 'yes' in the GPT layer (yes as in, yes its their job). First will be the one that detects writing of a file. 
-
-8. With this, the system level change has been executed. 
-
-Each model is expected to send a message to the `Model S`. This is to ensure that all changes have been made and now we can generate the prompt that needs to be shown to the user. 
-
-- `Model S` first checks who the sender is. If the sequencer is the sender, then we must be in the `b` part and hence, it generates the required content and sends it to the breakout, which then sends it back to the terminal.
-
-- If sequencer is not the sender, then there must have been a system change (not necessarily part `a` cause even if its not a file input, all processes will eventually reach there). It means, the output is coming from the GPT layer.
-
-If the model's output is 'yes' (recall the 'yes' and 'no' in the extraction models, similar concept), then it will first process, then send a 'done' message to Model 
-S, and if 'no' then it will immediately send a 'done' message to Model S. This means, once Model S has the approriate number of 'done's it can start processing. 
-
-
+Now it seems clearer. Let's see tomorrow with a fresher mind.
 
 
 ## The structure
