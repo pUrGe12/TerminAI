@@ -157,7 +157,7 @@ def get_history():
     """
     response = supabase.table('History').select("*").order('id', desc=True).limit(5).execute().data
     
-    keys_to_keep = {'SysBool', 'M_func', 'Prompt'}
+    keys_to_keep = {'SysBool', 'Ex_M_func', 'Prompt'}
     filtered_data = [{key: dos[key] for key in dos if key in keys_to_keep} for dos in response]    
     return response
     
@@ -168,7 +168,7 @@ def add_history(name, system_boolean, prompt):
 
     This is to be called after querying the database, so that the current input is not regarded as history.
     """
-    Info = {'SysBool': f"{system_boolean}", 'M_func': f"{function_dict.get(name)}", 'Prompt': f"{prompt}"}
+    Info = {'SysBool': f"{system_boolean}", 'Ex_M_func': f"{function_dict.get(name)}", 'Prompt': f"{prompt}"}
     response = supabase.table('History').insert(Info).execute()
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
