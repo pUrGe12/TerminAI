@@ -13,6 +13,9 @@ Functionality
 - [ ] Before broadcasting, pull from relevant data from the database and add that to the user's message, explicitly mentioning it as `history`. Relevance important here.
 - [x] Before broadcasting, pull from database and add that to the user's message, explicitly mentioning it as `history`.
 
+- [ ] Handle more than one responses from the extraction layer (that is, added all to the database).
+
+
 > [!IMPORTANT]
 > The sequencer will not send anything back to the breakout. The final response will be recieved by the `Model S`.
 
