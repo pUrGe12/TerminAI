@@ -128,11 +128,3 @@ And you're good to go!
 For modularity's sake, you may wish to add these keys in [the home](./api_keys.py) API file as well. :smile:
 
 ---
-
-## PART A
-
-Check out [part A](./PartA_backend). This is essentially the main communcations part. The exact sequence is present in that respective directory
-
-For an understanding of the communications in Part A, refer the [workflow](./PartA_backend/workflow.md)
-
----
