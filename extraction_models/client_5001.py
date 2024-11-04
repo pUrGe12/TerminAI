@@ -50,11 +50,16 @@ class ReceiverSender:
     
     def send_message(self, work_summary):
         """
-        send the feedback to the sequencer.
+        send the feedback to the sequencer. The feedback includes
+        1. system boolean value
+        2. Model name (or the sender)
+        3. work summary
+
+        The prompt is already present with the sequencer.
         """
         data = {
             'sysbool': True,                            # If this code sends data, then it must have been a system level operation!
-            'sender': f'Node-{self.listen_port}',
+            'sender': f'Node-{self.listen_port}',       # This essentially gives the model function
             'work_summary': work_summary                # A short 20 word summary on what the user asked and what the model generated
         }
         encoded_data = json.dumps(data).encode('utf-8')
@@ -73,14 +78,14 @@ class ReceiverSender:
         3. work_summary
         4. user_prompt
 
-        We call this only if the M1 gives a yes.
+        We call this only if the M_init gives a yes.
         """
         data = {
             'json_value': json_value,
             'system_bool': True,                                # If this code sends data, then it must have been a system level operation!
-            'sender': f'Node-{self.listen_port}',               # This gives the model name 
-            'prompt': user_prompt,
-            'work_summary': work_summary
+            'sender': NAME,                                     # The model name is important because it determines which ports to broadcast further to
+            'prompt': user_prompt,                              # This is the user's prompt, still being carried around
+            'work_summary': work_summary                        # The work summary
         }
         encoded_data = json.dumps(data).encode('utf-8')
         try:
@@ -128,7 +133,7 @@ class ReceiverSender:
 
 def M_init(user_prompt, history):
     '''
-    This model is checking if this file is even required. Its very basic, outputs a yes or a no.
+    This model is checking if this file is even required. Its very basic, outputs a True or a False, depending on whether the file is needed.
     '''
     prompt_init = prompt_init_dict.get(f"{NAME}_init") + f"""
                     This is the history: {history}
