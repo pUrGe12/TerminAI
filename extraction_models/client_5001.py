@@ -6,7 +6,7 @@ import sys
 from queue import Queue
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
-from Ex_address import prompt_dict
+from Ex_address import prompt_dict, prompt_init_dict
 from api_keys import apikey_dict
 
 NAME = 'client_5001'
@@ -48,14 +48,14 @@ class ReceiverSender:
         self.listener_thread.daemon = True
         self.listener_thread.start()
     
-    def send_message(self, message, system_bool, work_summary):
+    def send_message(self, work_summary):
         """
         send the feedback to the sequencer.
         """
         data = {
-            'sysbool': system_bool,
+            'sysbool': True,                            # If this code sends data, then it must have been a system level operation!
             'sender': f'Node-{self.listen_port}',
-            'work_summary': work_summary
+            'work_summary': work_summary                # A short 20 word summary on what the user asked and what the model generated
         }
         encoded_data = json.dumps(data).encode('utf-8')
         try:
@@ -64,7 +64,7 @@ class ReceiverSender:
         except Exception as e:
             print(f"\nError sending message: {e}")
 
-    def send_to_GPT_breakout(self, json_value, system_bool, user_prompt, listener_port=65032):
+    def send_to_GPT_breakout(self, json_value, user_prompt, work_summary, listener_port=65032):
         """
         Send message to breakout GPT via port 65032. The things we want to send are
 
@@ -77,9 +77,10 @@ class ReceiverSender:
         """
         data = {
             'json_value': json_value,
-            'system_bool': system_bool,
+            'system_bool': True,                                # If this code sends data, then it must have been a system level operation!
             'sender': f'Node-{self.listen_port}',               # This gives the model name 
-            'prompt': user_prompt
+            'prompt': user_prompt,
+            'work_summary': work_summary
         }
         encoded_data = json.dumps(data).encode('utf-8')
         try:
@@ -90,7 +91,7 @@ class ReceiverSender:
 
     def print_received_message(self, addr, received_data):
         """
-        Print received message and add it to the queue
+        Print received message and add it to the queue, this is from the sequencer.
         """
         print(f"\nReceived broadcast from {addr}: {received_data['current_prompt']}")
         print(f"Timestamp: {received_data['timestamp']}")
@@ -130,7 +131,7 @@ def M_init(user_prompt, history):
     '''
     This model is checking if this file is even required. Its very basic, outputs a yes or a no.
     '''
-    prompt_init = prompt_dict.get(NAME_init) + f"""
+    prompt_init = prompt_dict.get(f"{NAME}_init") + f"""
                     This is the history: {history}
                     This is the user's prompt: {user_prompt}
     """
@@ -206,14 +207,12 @@ if __name__ == "__main__":
                     '''
                         First check if the current model is required for the prompt
                     '''
-                    (system_bool, work_summary, json) = GPT_response(user_prompt, history)
+                    (work_summary, json) = GPT_response(user_prompt, history)
 
                     # Now run the GPT model to generate the json
 
-                    receiver.send_message(system_bool, work_summary)                          # sending feedback.
-                    receiver.send_to_GPT_breakout(answer, sysbool, user_prompt)
-                else:
-                    pass                            # Don't do anything else                 
+                    receiver.send_message(work_summary)                                          # sending feedback
+                    receiver.send_to_GPT_breakout(json, user_prompt, work_summary)               # sending to GPT breakout    
             time.sleep(0.1)
             
     except KeyboardInterrupt:
