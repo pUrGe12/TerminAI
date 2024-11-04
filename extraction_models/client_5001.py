@@ -94,7 +94,6 @@ class ReceiverSender:
         Print received message and add it to the queue, this is from the sequencer.
         """
         print(f"\nReceived broadcast from {addr}: {received_data['current_prompt']}")
-        print(f"Timestamp: {received_data['timestamp']}")
         print(f"Sender: {received_data['sender']}")
         print(f"History: {received_data['history']}")
         
@@ -131,7 +130,7 @@ def M_init(user_prompt, history):
     '''
     This model is checking if this file is even required. Its very basic, outputs a yes or a no.
     '''
-    prompt_init = prompt_dict.get(f"{NAME}_init") + f"""
+    prompt_init = prompt_init_dict.get(f"{NAME}_init") + f"""
                     This is the history: {history}
                     This is the user's prompt: {user_prompt}
     """
@@ -149,7 +148,7 @@ def M_init(user_prompt, history):
             if chunk.text:
                 output_init += str(chunk.text)
 
-        if "yes" in output_init.lower():
+        if "yes" in output_init.lower():                        # This will give just one boolean value
             return True
         else:
             return False
@@ -184,7 +183,7 @@ def GPT_response(user_prompt, history):
 
         # The exact output will change now. There is going to be a json output.
 
-        pass
+        return (json, work_summary)
 
     except Exception as e:
         print(f"Error generating GPT response: {e}")
@@ -204,10 +203,8 @@ if __name__ == "__main__":
                 answer = M_init(user_prompt, history)
 
                 if answer == True:
-                    '''
-                        First check if the current model is required for the prompt
-                    '''
-                    (work_summary, json) = GPT_response(user_prompt, history)
+                    ''' First check if the current model is required for the prompt '''
+                    (json, work_summary) = GPT_response(user_prompt, history)
 
                     # Now run the GPT model to generate the json
 

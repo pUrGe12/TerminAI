@@ -3,20 +3,20 @@ import threading
 import time
 import json
 import queue
-from supabase import create_client, Client                                     # For database adding and pulling
+from supabase import create_client, Client                                        # For database adding and pulling
 from Ex_address import function_dict                                              # For getting information on the models, to add to database
-from api_keys import supabase_key_dict
+from api_keys import supabase_key_dict                                            # For the supabase API setup
+
+# Supabase API setup
 
 url: str = str(supabase_key_dict.get('url'))
 key: str = str(supabase_key_dict.get('key'))
 
 supabase: Client = create_client(url, key)
 
-TIMES_RAN = 1
-
-# --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#                                                                        Broadcasting and listening
-# --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                                                      The broadcasting class
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 class BroadcasterListener:
     '''
@@ -27,6 +27,17 @@ class BroadcasterListener:
     '''
 
     def __init__(self, broadcast_ports, listen_port):
+        '''
+            We've used two queues:
+            1. To get feedback from the models
+            2. To use the user's current prompt
+
+            We're not using a queue for the history, there is a function that just pulls and does that, because duh, we're not receiving it from any other socket.
+
+            In this broadcaster we've started a socket for broadcasting and one for listening, that is in a different thread. 
+            We really don't have to use different cores for broadcasting cause its only 6 models we have to do it to, its small so the small delays will not make much of a difference.
+        '''
+
         self.broadcast_ports = broadcast_ports
         self.listen_port = listen_port
         self.running = True
@@ -51,17 +62,20 @@ class BroadcasterListener:
     
     def broadcast_message(self, current_prompt, history):
         """
-        Broadcasts a message and a history list to all models. The history directly pulled contains weird stuff that is not really of any sense to the models. 
-        
-        Make sure the history passed here contains only the relevant things.
+        Broadcasts the prompt and history list to all models in the extraction layer.
+
+        Here we are broadcasting the current prompt and the history to all the models. We'll also put the sender, its important because its being used to ensure that the listeners
+        (the clients) are not listening to their own messages!
+
+        We encode and send it to the broadcast ports. This is a predefined list, we can always add more into it.
         """
         
-        assert isinstance(history, list), 'history is wrongly formatted'
+        assert isinstance(history, list), 'history is wrongly formatted, it must be a list'
+
         data = {
             'current_prompt': current_prompt,
             'history': history,
-            'timestamp': time.strftime('%H:%M:%S'),             # This is not really necessary.
-            'sender': f'Broadcaster-{self.listen_port}'         # This is not really necessary.
+            'sender': f'Sequencer-{self.listen_port}'         # This is necessary
         }
         encoded_data = json.dumps(data).encode('utf-8')
         
@@ -86,7 +100,7 @@ class BroadcasterListener:
 
     def listen_for_messages(self):
         """
-        Listens for incoming messages on the specified port.
+        This is to listen for incoming feedback from the extraction layer. 
         """
         print(f"Listening for messages on port {self.listen_port}...")
         while self.running:
@@ -122,27 +136,34 @@ class BroadcasterListener:
 
     def receive_external_data(self):
         '''
-        This function handles the receipt of prompts from the backend endpoint by accepting connections. This is the only comms it needs with the endpoint
+        This function handles the receiving of prompts from the backend endpoint by accepting connections. This is the only comms it needs with the endpoint.
+        
+        We're already getting the prompt from the endpoint
         '''
+
         print("Listening for external data on port 65000 for user prompt...")
         while self.running:
+
             try:
                 client_socket, addr = self.external_receiver_socket.accept()  # Accept an incoming connection
                 print(f"Connection accepted from {addr}")
-                data = client_socket.recv(2048).decode()  # Receive data from the connected client
+                data = client_socket.recv(2048).decode()  
 
                 if data:
                     print(f"\nReceived external data: {data}")
-                    self.prompt_queue.put({'prompt': data, 'sender': 'Endpoint-65000'})
+                    self.prompt_queue.put({'prompt': data, 'sender': 'Endpoint-65000'})             # Adding the current prompt that we recieved from the endpoint to the prompt_queue
 
-                client_socket.close()  # Close the client connection after handling
+                client_socket.close()
+
             except ConnectionResetError:
                 print("Connection to the external data sender lost.")
                 break
+
             except Exception as e:
                 print(f"Error receiving external data: {e}")
 
     def close(self):
+
         self.running = False
         self.broadcast_socket.close()
         self.listen_socket.close()
@@ -152,11 +173,13 @@ class BroadcasterListener:
 #                                                                              Database
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def get_history():
+def get_history(n):
     """
-    This function queries supabase and gets the last five data points, and returns a list of the required parameters, after filtering it.
+    This function queries supabase and gets the last n data points, and returns a list of the required parameters, after filtering it. This is done from version 2.
+
+    n -> the number of entries you want. I have kept it to be usually at 5.
     """
-    response = supabase.table('History_v2').select("*").order('id', desc=True).limit(5).execute().data      # Take the last 5
+    response = supabase.table('History_v2').select("*").order('id', desc=True).limit(n).execute().data      # Take the last n
     
     keys_to_keep = {'system_boolean', 'ex_model_function', 'user_prompt', 'ex_work_summary'}
     filtered_data = [{key: dos[key] for key in dos if key in keys_to_keep} for dos in response]    
@@ -164,56 +187,57 @@ def get_history():
     
 def add_history(name, system_boolean, prompt, ex_work_summary):
     """
-    This function is to be called whenever the broadcaster receives data from any node. When it recieves data, it means the node must've fired up. 
-    It will extract the relevant data from the node and add that to the database for further history implementation.
-
-    This is to be called after querying the database, so that the current input is not regarded as history.
+    This function will add the necessary data it recieved from the models to the database. 
+    
+    Adding it to version 2.
     """
+
     Info = {'system_bool': f"{system_boolean}", 'ex_model_function': f"{function_dict.get(name)}", 'user_prompt': f"{prompt}", "ex_work_summary": f"{ex_work_summary}"}
-    response = supabase.table('History').insert(Info).execute()
+    response = supabase.table('History_v2').insert(Info).execute()
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                                     comms with breakout and start
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def get_prompt(broadcaster):
-    '''
-    This function essentially 
-    '''
-    try:
-        user_message = broadcaster.prompt_queue.get(timeout = 5)
-        return user_message['message']  
-    except Exception as e:
-        print(e)
-        return f'An exception occurred: {e}'
-
 if __name__ == "__main__":
 
-    BROADCAST_PORTS = [5000+i for i in range(1,4)]  # Ports to broadcast to
+    BROADCAST_PORTS = [5000+i for i in range(1,7)]                           # Ports to broadcast to, 5001 to 5006 --> all the extraction models
     LISTEN_PORT = 5000  # Port to listen on
     broadcaster = BroadcasterListener(BROADCAST_PORTS, LISTEN_PORT)
-    broadcaster.start_external_receiver()                               # listening for data from the endpoint
+    broadcaster.start_external_receiver()                                    # listening for data from the endpoint
 
     try:
         while True:
             if not broadcaster.prompt_queue.empty():
-                prompt = broadcaster.prompt_queue.get()
-                print(f"Broadcasting received prompt: {prompt['prompt']}")
-                if prompt['prompt'].lower() == 'quit':
-                    break
-                history = get_history()
-                broadcaster.broadcast_message(prompt['prompt'], history)
+                try:
+                    prompt = broadcaster.prompt_queue.get(timeout = 5)          # Waits up to 5 seconds for the prompt from the endpoint
+
+                    print(f"Broadcasting received prompt: {prompt['prompt']}")
+                    
+                    if prompt['prompt'].lower() == 'quit':
+                        break
+                    
+                    history = get_history(5)
+                    broadcaster.broadcast_message(prompt['prompt'], history)
+                except queue.Empty:
+                    print('No prompt recieved till now. It has been 5 seconds')
+
             try:
-                messages = broadcaster.message_queue.get(timeout=5)          # Waits up to 5 seconds for a message from the models
+                messages = broadcaster.message_queue.get(timeout=5)          # Waits up to 5 seconds for the feedback from the models
+                
                 system_boolean = messages['sysbool']
                 name = f"client_{messages['sender'].split('-')[1]}"
-                add_history(name, system_boolean, prompt)
+                work_summary = messages['work_summary']
+                
+                add_history(name, system_boolean, prompt, work_summary)
                 print('added history')
+            
             except queue.Empty:
                 # Timeout after 5 seconds, continue if no message was received
-                print('No message received within 5 seconds. Message queue is empty.')
+                print('No feedback received till now. It has been 5 seconds')
 
     except KeyboardInterrupt:
         print("\nShutting down...")
+    
     finally:
         broadcaster.close()
