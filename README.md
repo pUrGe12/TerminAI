@@ -15,6 +15,7 @@ Check out the terminal [here](./terminal_gui/README.md)!
 - [ ] Test the parsing logic.
 - [ ] Test the comms again.  
 - [ ] Test part A.
+- [ ] UPDATE the images, for the sequencer and the breakout and all.
 
 ## Brief explantion of the Idea
 
