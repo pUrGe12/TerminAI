@@ -11,9 +11,10 @@ Check out the terminal [here](./terminal_gui/README.md)!
 
 ## Stuff to test out
 
-1. Test out if the models output as they should.
-2. Write the parsing logic in the clients.
-3. 
+- [ ] Test out if the models output as they should.
+- [ ] Test the parsing logic.
+- [ ] Test the comms again.  
+- [ ] Test part A.
 
 ## Brief explantion of the Idea
 
