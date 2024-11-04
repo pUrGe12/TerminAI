@@ -76,6 +76,10 @@ This is version 1.
 > [!NOTE]
 > There were issues with Version 1, which is why we had to switch to v3. (let's not talk about version 2)
 
+So, this is the basically it. Lot's of revisions were made. Will have to update all readmes.
+
+- [ ] Update all readmes with new work.
+
 ---
 
 > [!IMPORTANT]
@@ -84,12 +88,14 @@ This is version 1.
 Pending work:
 
 - [x] Write the workflows properly. Don't leave anything ambiguous.
-- [x] Complete [sequencer](./Sequencer). The pending work will be listed there.
-- [ ] Figure out the small part of sending GPT layer data in history is required or not.
-- [ ] Complete [endpoint](./Backend_endpoint). The pending work will be listed there.  
+- [ ] Complete [endpoint](./Backend_endpoint). The pending work will be listed there. 
+- [ ] Complete [sequencer](./Sequencer). The pending work will be listed there.
+- [ ] Write all 6 [extraction models](./extraction_models). 
 - [ ] Complete [breakoutGPT](./BreakoutGPT). The pending work will be listed there.
-- [ ] Write all extraction models. This will take some time.
+- [ ] Create system functions.
 - [ ] Complete GPT layer.
+- [ ] Create concat model.
+- [ ] Create Model S.
 
 one more thing,
 
