@@ -48,7 +48,8 @@ prompt_init_dict = {
 	'client_5003_init': f"""
 							you will be given a prompt and some history. Your task is to figure out if the given prompt requires any application operations.
 							
-							
+							Application level operations means:
+							1. If the user wants to open or close an application like a web-browser 
 						""",
 	'client_5004_init': f"""
 							you will be given a prompt and some history. Your task is to figure out if the given prompt requires any network operations.
