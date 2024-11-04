@@ -7,9 +7,6 @@
 
 **A terminal with AI capabilities.** Forget commands, just tell it what it do! 
 
-> [!IMPORTANT]
-> A step towards **AIOS**.
-
 Check out the terminal [here](./terminal_gui/README.md)!
 
 ## Brief explantion of the Idea
