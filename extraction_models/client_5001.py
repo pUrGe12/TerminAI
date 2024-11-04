@@ -17,6 +17,9 @@ genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
 chat = model.start_chat(history=[])
 
+model_init = genai.GenerativeModel('gemini-pro')
+chat_init = model_init.start_chat(history=[])
+
 class ReceiverSender:
     '''
     It has two running queues, one for messages and one for the history. When it receives the history information from the broadcaster, it adds the list in this queue.
@@ -27,8 +30,8 @@ class ReceiverSender:
         self.listen_port = listen_port
         self.broadcaster_port = broadcaster_port
         self.running = True
-        self.message_queue = Queue()
-        self.history_queue = Queue()
+        self.message_queue = Queue()                # This is holding the current prompts
+        self.history_queue = Queue()                # This is holding the history as a list
         
         # UDP socket for receiving broadcasts
         self.receive_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -45,15 +48,14 @@ class ReceiverSender:
         self.listener_thread.daemon = True
         self.listener_thread.start()
     
-    def send_message(self, message, sysbool):
+    def send_message(self, message, system_bool, work_summary):
         """
-        send the feedback to the broadcaster for adding to history 
+        send the feedback to the sequencer.
         """
         data = {
-            'message': message,
-            'sysbool': sysbool,
-            'timestamp': time.strftime('%H:%M:%S'),
-            'sender': f'Node-{self.listen_port}'
+            'sysbool': system_bool,
+            'sender': f'Node-{self.listen_port}',
+            'work_summary': work_summary
         }
         encoded_data = json.dumps(data).encode('utf-8')
         try:
@@ -62,15 +64,22 @@ class ReceiverSender:
         except Exception as e:
             print(f"\nError sending message: {e}")
 
-    def send_to_GPT_breakout(self, message, sysbool, prompt, listener_port=65032):
+    def send_to_GPT_breakout(self, json_value, system_bool, user_prompt, listener_port=65032):
         """
-        Send message to breakout GPT via port 65032
+        Send message to breakout GPT via port 65032. The things we want to send are
+
+        1. json value
+        2. model name (to figure out what it was trying to do)
+        3. work_summary
+        4. user_prompt
+
+        We call this only if the M1 gives a yes.
         """
         data = {
-            'message': message,
-            'sysbool': sysbool,
-            'sender': f'Node-{self.listen_port}',
-            'prompt': prompt
+            'json_value': json_value,
+            'system_bool': system_bool,
+            'sender': f'Node-{self.listen_port}',               # This gives the model name 
+            'prompt': user_prompt
         }
         encoded_data = json.dumps(data).encode('utf-8')
         try:
@@ -83,15 +92,15 @@ class ReceiverSender:
         """
         Print received message and add it to the queue
         """
-        print(f"\nReceived broadcast from {addr}: {received_data['message']}")
+        print(f"\nReceived broadcast from {addr}: {received_data['current_prompt']}")
         print(f"Timestamp: {received_data['timestamp']}")
         print(f"Sender: {received_data['sender']}")
         print(f"History: {received_data['history']}")
         
         # Don't process messages from ourselves
         if received_data['sender'] != f'Node-{self.listen_port}':
-            self.message_queue.put(received_data['message'])
-            self.history_queue.put(received_data['history'])
+            self.message_queue.put(received_data['current_prompt'])         # Adding the current prompt here.
+            self.history_queue.put(received_data['history'])                # Adding the history here.
     
     def listen_for_broadcasts(self):
         """Listen for incoming broadcast messages"""
@@ -117,27 +126,64 @@ class ReceiverSender:
         self.receive_socket.close()
         self.send_socket.close()
 
-def GPT_response(prompt, history):
-    prompt_init = prompt_dict.get(NAME) + f"""
+def M_init(user_prompt, history):
+    '''
+    This model is checking if this file is even required. Its very basic, outputs a yes or a no.
+    '''
+    prompt_init = prompt_dict.get(NAME_init) + f"""
                     This is the history: {history}
-                    This is the prompt: {prompt}
-                """
+                    This is the user's prompt: {user_prompt}
+    """
 
     try:
-        output_init = ''
-        response_init = chat.send_message(prompt_init, stream=True, safety_settings={
+        output_init = ""
+        response_init = chat_init.send_message(prompt_init, stream=True, safety_settings={
             HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE, 
             HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
             HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
             HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE
         })
+
         for chunk in response_init:
             if chunk.text:
                 output_init += str(chunk.text)
+
+        if "yes" in output_init.lower():
+            return True
+        else:
+            return False
+
+
+def GPT_response(user_prompt, history):
+    prompt = prompt_dict.get(NAME) + f"""
+                    This is the history: {history}
+                    This is the user's prompt: {user_prompt}
+                """
+
+    try:
+        output = ''
+        response = chat.send_message(prompt, stream=True, safety_settings={
+            HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE, 
+            HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+            HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE
+        })
+        for chunk in response:
+            if chunk.text:
+                output += str(chunk.text)
+
+        # parse the output for the json and work summary etc.
+
+        '''    
         sysbool = output_init.strip().split(',')[0].split(':')[1].strip()
         answer = output_init.strip().split(',')[1].split(':')[1].strip()
         
         return (sysbool, answer)
+        '''
+
+        # The exact output will change now. There is going to be a json output.
+
+        pass
 
     except Exception as e:
         print(f"Error generating GPT response: {e}")
@@ -153,10 +199,21 @@ if __name__ == "__main__":
             if not receiver.message_queue.empty():
                 user_prompt = receiver.message_queue.get()
                 history = receiver.history_queue.get()
-                (sysbool, answer) = GPT_response(user_prompt, history)
-                if "yes" in answer.lower():
-                    receiver.send_message(answer, sysbool)
+
+                answer = M_init(user_prompt, history)
+
+                if answer == True:
+                    '''
+                        First check if the current model is required for the prompt
+                    '''
+                    (system_bool, work_summary, json) = GPT_response(user_prompt, history)
+
+                    # Now run the GPT model to generate the json
+
+                    receiver.send_message(system_bool, work_summary)                          # sending feedback.
                     receiver.send_to_GPT_breakout(answer, sysbool, user_prompt)
+                else:
+                    pass                            # Don't do anything else                 
             time.sleep(0.1)
             
     except KeyboardInterrupt:

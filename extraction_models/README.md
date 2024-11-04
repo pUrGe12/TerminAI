@@ -49,3 +49,18 @@ How?
 For sequencer logic, head over [here](../Sequencer/idea/Workflow_sequencer.md)
 
 For model logic, head over [here](./idea/Workflow_clients.md)
+
+
+---
+
+
+Stuff done:
+
+1. Created model for checking
+2. fixed database stuff
+
+
+Stuff not done:
+
+1. gave proper prompts.
+2. coded all the models.

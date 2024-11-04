@@ -49,7 +49,7 @@ class BroadcasterListener:
         self.listener_thread.daemon = True                          # Make thread daemon so it exits when main thread exits
         self.listener_thread.start()
     
-    def broadcast_message(self, message, history):
+    def broadcast_message(self, current_prompt, history):
         """
         Broadcasts a message and a history list to all models. The history directly pulled contains weird stuff that is not really of any sense to the models. 
         
@@ -58,10 +58,10 @@ class BroadcasterListener:
         
         assert isinstance(history, list), 'history is wrongly formatted'
         data = {
-            'message': message,
+            'current_prompt': current_prompt,
             'history': history,
-            'timestamp': time.strftime('%H:%M:%S'),
-            'sender': f'Broadcaster-{self.listen_port}'
+            'timestamp': time.strftime('%H:%M:%S'),             # This is not really necessary.
+            'sender': f'Broadcaster-{self.listen_port}'         # This is not really necessary.
         }
         encoded_data = json.dumps(data).encode('utf-8')
         
@@ -74,12 +74,12 @@ class BroadcasterListener:
 
     def print_received_message(self, addr, received_data):
         """
-        Pretty-printing of the received message and adding it to the queue for external access.
+        Pretty-printing of the received message and adding it to the queue for external access. This is the one received from the extraction layer.
         """
-        print(f"\nReceived from {addr}: {received_data['message']}")
-        print(f"Timestamp: {received_data['timestamp']}")
+        print(f"\nReceived from {addr}")
         print(f"Sender: {received_data['sender']}")
         print(f"sysbool: {received_data['sysbool']}")
+        print(f"work_summary: {received_data['work_summary']}")
         print("\nEnter message to broadcast (or 'quit' to exit): ", end='', flush=True)
         
         self.message_queue.put(received_data)
@@ -106,6 +106,7 @@ class BroadcasterListener:
             except Exception as e:
                 if self.running:                                        # only print error if we're still running
                     print(f"\nError while listening: {e}")
+
     def start_external_receiver(self):
         '''
         This function starts a socket server to connect to the backend endpoint and receive user prompts.
@@ -121,7 +122,7 @@ class BroadcasterListener:
 
     def receive_external_data(self):
         '''
-        This function handles the receipt of prompts from the backend endpoint by accepting connections.
+        This function handles the receipt of prompts from the backend endpoint by accepting connections. This is the only comms it needs with the endpoint
         '''
         print("Listening for external data on port 65000 for user prompt...")
         while self.running:
@@ -132,7 +133,7 @@ class BroadcasterListener:
 
                 if data:
                     print(f"\nReceived external data: {data}")
-                    self.prompt_queue.put({'message': data, 'sender': 'Endpoint-65000'})
+                    self.prompt_queue.put({'prompt': data, 'sender': 'Endpoint-65000'})
 
                 client_socket.close()  # Close the client connection after handling
             except ConnectionResetError:
@@ -155,20 +156,20 @@ def get_history():
     """
     This function queries supabase and gets the last five data points, and returns a list of the required parameters, after filtering it.
     """
-    response = supabase.table('History').select("*").order('id', desc=True).limit(5).execute().data
+    response = supabase.table('History_v2').select("*").order('id', desc=True).limit(5).execute().data      # Take the last 5
     
-    keys_to_keep = {'SysBool', 'Ex_M_func', 'Prompt'}
+    keys_to_keep = {'system_boolean', 'ex_model_function', 'user_prompt', 'ex_work_summary'}
     filtered_data = [{key: dos[key] for key in dos if key in keys_to_keep} for dos in response]    
     return response
     
-def add_history(name, system_boolean, prompt):
+def add_history(name, system_boolean, prompt, ex_work_summary):
     """
     This function is to be called whenever the broadcaster receives data from any node. When it recieves data, it means the node must've fired up. 
     It will extract the relevant data from the node and add that to the database for further history implementation.
 
     This is to be called after querying the database, so that the current input is not regarded as history.
     """
-    Info = {'SysBool': f"{system_boolean}", 'Ex_M_func': f"{function_dict.get(name)}", 'Prompt': f"{prompt}"}
+    Info = {'system_bool': f"{system_boolean}", 'ex_model_function': f"{function_dict.get(name)}", 'user_prompt': f"{prompt}", "ex_work_summary": f"{ex_work_summary}"}
     response = supabase.table('History').insert(Info).execute()
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -197,11 +198,11 @@ if __name__ == "__main__":
         while True:
             if not broadcaster.prompt_queue.empty():
                 prompt = broadcaster.prompt_queue.get()
-                print(f"Broadcasting received prompt: {prompt['message']}")
-                if prompt['message'].lower() == 'quit':
+                print(f"Broadcasting received prompt: {prompt['prompt']}")
+                if prompt['prompt'].lower() == 'quit':
                     break
                 history = get_history()
-                broadcaster.broadcast_message(prompt['message'], history)
+                broadcaster.broadcast_message(prompt['prompt'], history)
             try:
                 messages = broadcaster.message_queue.get(timeout=5)          # Waits up to 5 seconds for a message from the models
                 system_boolean = messages['sysbool']
