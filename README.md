@@ -136,6 +136,4 @@ Instead of having different functions,
 
 2. If the task is acheivable by the terminal, then the commands present in the `/bin` directory will suffice. This means...
 
-What if we just pass the json data to the model, ask them to use the available functions in `/bin` and give code. Then execute that! 
-
-Yoooooo........
+We just pass the json data to the model, ask them to use the available functions in `/bin` and give code. Then execute that! 
