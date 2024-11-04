@@ -65,9 +65,16 @@ Now it seems clearer. Let's see tomorrow with a fresher mind.
 
 For a better understanding of the structure refer the [workflow](./idea/README.md)
 
-This is the architecture.
+This is the latest version.
+
+![Architecture](./idea/TerminAI_v3.png)
+
+This is version 1.
 
 ![Architecture](./idea/TerminAI.png)
+
+> [!NOTE]
+> There were issues with Version 1, which is why we had to switch to v3. (let's not talk about version 2)
 
 ---
 
