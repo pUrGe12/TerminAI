@@ -4,6 +4,7 @@ import time
 import json
 import sys
 from queue import Queue
+import re
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
 from Ex_address import prompt_dict, prompt_init_dict
@@ -179,15 +180,9 @@ def GPT_response(user_prompt, history):
 
         # parse the output for the json and work summary etc.
 
-        '''    
-        sysbool = output_init.strip().split(',')[0].split(':')[1].strip()
-        answer = output_init.strip().split(',')[1].split(':')[1].strip()
+        json = re.findall('@@@json.*@@@', output, re.DOTALL)
+        work_summary = re.findall('$$$summary.*$$$', output, re.DOTALL)
         
-        return (sysbool, answer)
-        '''
-
-        # The exact output will change now. There is going to be a json output.
-
         return (json, work_summary)
 
     except Exception as e:

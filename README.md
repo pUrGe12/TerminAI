@@ -9,6 +9,12 @@
 
 Check out the terminal [here](./terminal_gui/README.md)!
 
+## Stuff to test out
+
+1. Test out if the models output as they should.
+2. Write the parsing logic in the clients.
+3. 
+
 ## Brief explantion of the Idea
 
 1. The user is expected to enter something like "write a 500 word essay on Abraham Lincon in a file in my desktop".
