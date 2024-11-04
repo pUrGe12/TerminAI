@@ -36,7 +36,8 @@ These are broad and cover most of the use cases.
 
 7. The smaller GPT models will basically try to generate a json type object of the necessary parameters, to fulfill the request and see which parameters are missing. The missing ones, they'll add on their own. 
 
-The breakout will broadcast this message to a certain group of ports, specific for file operations, like read, write, delete, touch, change permissions etc. There are many. The relevant ones respond with a 'yes' and therein lies bash scripts or `os commands`, whichever is more convinent that they can run based on what they do.
+> [!IMPORTANT]
+> The breakout will broadcast this message to a certain group of ports, specific for file operations, like read, write, delete, touch, change permissions etc. There are many. The relevant ones respond with a 'yes' and therein lies bash scripts or `os commands`, whichever is more convinent that they can run based on what they do.
 
 In this case, the write will fire up, which will create a json object containing where to write and what to write. Then the functions inside, will actually do that.
 
@@ -55,7 +56,6 @@ or we don't have to hardcode at all, we'll have a python file that has functions
 ---
 
 Now it seems clearer. Let's see tomorrow with a fresher mind.
-
 
 ## The structure
 
@@ -127,3 +127,13 @@ And you're good to go!
 For modularity's sake, you may wish to add these keys in [the home](./api_keys.py) API file as well. :smile:
 
 ---
+
+# Better
+
+Instead of having different functions, 
+
+1. The models in the GPT layer are recieving the json data. The json data contains all the relevant parameters that the user would need to use in order to achieve the task.
+
+2. If the task is acheivable by the terminal, then the commands present in the `/bin` directory will suffice. This means...
+
+What if we just pass the json data to the model, ask them to use the available functions in `/bin` and give code. Then execute that! 
