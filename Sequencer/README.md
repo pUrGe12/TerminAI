@@ -4,11 +4,13 @@ Functionality
 
 - [x] Broadcast user's message to all clients.
 - [x] Receive feedback, that is, which model fired up and what the response was.
+- [ ] The feedback to be received is, `system boolean value`, `model function`, `work summary`. The prompt will be present with the sequencer. 
 
 > [!NOTE]
 > The response will either be a binary or a tertiary, no more that than.
 
-- [x] Connect to supabase and push the feedback.
+- [ ] Connect to supabase and push the feedback, along with the prompt. Fix this.
+- [ ] Before broadcasting, pull from relevant data from the database and add that to the user's message, explicitly mentioning it as `history`. Relevance important here.
 - [x] Before broadcasting, pull from database and add that to the user's message, explicitly mentioning it as `history`.
 
 > [!IMPORTANT]
@@ -24,10 +26,12 @@ The sequencer is the main part of the problem, responsible for `establishing com
 
 What works:
 
-- [x] Broadcaster is able to query the database and send history
-- [x] The client is able to receive history
-- [x] The client gets the right things from history (that is, the GPT doesn't need ID and all)
-- [x] The broadcaster is able to add to the database based on the response from the client
+- [x] Broadcaster is able to query the database and send history.
+- [ ] It is not adding the right stuff to history tho. Fix that.
+- [ ] Also, its not really broadcasting. Check out [breakout](./BreakoutGPT/breakout.py) to see how to do this simultaneous on different threads. 
+- [x] The client is able to receive history and the prompts.
+- [ ] The client gets the right things from history (that is, the GPT doesn't need ID and all). The definition of right things has changed. Fix this.
+- [ ] The broadcaster is able to add to the database based on the response from the client. The code is there. Just add the correct things.
 - [x] Establish comms with [endpoint](../Backend_endpoint/commsBack.py)
 
 ---
@@ -37,7 +41,3 @@ What works:
 Before, it used to immediately do that, hence always resulting in an empty queue. If we receive a message within these 5 seconds, then we immediately proceed forward.
 
 ---
-
-Dilemma:
-
-- [ ] The database now has more columns, to incorporate for the GPT layer stuff as well. We will need to work out if we need to send GPT stuff as history as well.
