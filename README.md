@@ -46,10 +46,9 @@ The model will then send this json object to model S, it will have a comprehensi
 
 Then, each will create a json object, and send that to the Model S.
 
-WHAT IF THEY ARE DEPENDENT? on each other? What if we have to write to a value that the other finds? 
+What if they are dependent on each other? What if we have to write to a value that the other finds? 
 
-LETS HAVE a `concatenation model`! All json passes through the concatenation model, which looks at them all, judges if they are to be concatenated and does that (note that, the json contains the "value" that the model found, if it found anything at all). It has code to concatenate them. It will usually be do something, then based on that do something else. If there are more than 2, then we just tell the user to fuck off (for now...).
-
+For this we have a `concatenation model`. All json passes through the concatenation model, which looks at them all, judges if they are to be concatenated and does that (note that, the json contains the "value" that the model found, if it found anything at all). It has code to concatenate them. It will usually be do something, then based on that do something else. If there are more than 2, then we just tell the user to fuck off (for now...).
 
 or we don't have to hardcode at all, we'll have a python file that has functions extensively written to perform different tasks. We will import this file and take the relevant functions.
 
