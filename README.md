@@ -15,6 +15,14 @@ Check out the terminal [here](./terminal_gui/README.md)!
 
 I was thinking something similar to `ncdu`?
 
+
+## Things to do RN!
+
+- [ ] Check if part A works
+- [ ] Create setup
+
+once `part A` is robust, we'll move to GPT layer.
+
 ## Stuff to test out
 
 - [ ] Test out if the models output as they should.
