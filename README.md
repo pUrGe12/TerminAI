@@ -9,6 +9,12 @@
 
 Check out the terminal [here](./terminal_gui/README.md)!
 
+## Setup
+
+- [ ] We need to define a setup that will read the user's current directory structure, username and all that stuff to generate specific commands.
+
+I was thinking something similar to `ncdu`?
+
 ## Stuff to test out
 
 - [ ] Test out if the models output as they should.
