@@ -50,6 +50,9 @@ These are broad and cover most of the use cases.
 
 7. The smaller GPT models will basically try to generate a json type object of the necessary parameters, to fulfill the request and see which parameters are missing. The missing ones, they'll add on their own. 
 
+Note that they will have the help of the setup_config file which contains the directory structure and the necessary names to generate perfect commands (This will be more relevant in the future).
+
+
 > [!IMPORTANT]
 > The breakout will broadcast this message to a certain group of ports, specific for file operations, like read, write, delete, touch, change permissions etc. There are many. The relevant ones respond with a 'yes' and therein lies bash scripts or `os commands`, whichever is more convinent that they can run based on what they do.
 
@@ -67,6 +70,9 @@ For this we have a `concatenation model`. All json passes through the concatenat
 
 or we don't have to hardcode at all, we'll have a python file that has functions extensively written to perform different tasks. We will import this file and take the relevant functions.
 
+> [!TIP]
+> I am now thinking, what if we give broadcast the json to the smaller models, have the relevant one further refine it and then generate a command to do that? It will know exactly what the computer structure is from the config file... So, it will get the directory names right as well. Then we'll just execute it...
+
 ---
 
 Now it seems clearer. Let's see tomorrow with a fresher mind.
@@ -77,7 +83,7 @@ For a better understanding of the structure refer the [workflow](./idea/README.m
 
 This is the latest version.
 
-![Architecture](./idea/TerminAI_v3.png)
+![Architecture](./idea/TerminAI_v4.png)
 
 This is version 1.
 
