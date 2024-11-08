@@ -1,5 +1,11 @@
 # The structure
 
+We need to have a `setup` too! This setup should take in values from the user's laptop, the directory structure, to understand what all directories exist, what all files exist and all. 
+
+This must be automatic! Preferrably a bash script that will read the directory structure and store the relevant information in a file or a database.
+
+This file/database must then be called by the models to make better judgements.
+
 
 ## Frontend
 
