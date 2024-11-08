@@ -13,7 +13,8 @@ Check out the terminal [here](./terminal_gui/README.md)!
 
 - [ ] We need to define a setup that will read the user's current directory structure, username and all that stuff to generate specific commands.
 
-I was thinking something similar to `ncdu`?
+> [!IMPORTANT]
+> I was thinking something similar to `ncdu`? It should also know what softwares are currently installed only then can it tell if we need to install this!!
 
 
 ## Things to do RN!
@@ -155,13 +156,3 @@ And you're good to go!
 For modularity's sake, you may wish to add these keys in [the home](./api_keys.py) API file as well. :smile:
 
 ---
-
-# Better
-
-Instead of having different functions, 
-
-1. The models in the GPT layer are recieving the json data. The json data contains all the relevant parameters that the user would need to use in order to achieve the task.
-
-2. If the task is acheivable by the terminal, then the commands present in the `/bin` directory will suffice. This means...
-
-We just pass the json data to the model, ask them to use the available functions in `/bin` and give code. Then execute that! 
