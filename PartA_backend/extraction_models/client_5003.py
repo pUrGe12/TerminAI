@@ -66,7 +66,7 @@ class ReceiverSender:
         encoded_data = json.dumps(data).encode('utf-8')
         try:
             self.send_socket.sendto(encoded_data, ('255.255.255.255', self.broadcaster_port))
-            print(f"\nSent to broadcaster: {message}")
+            print(f"\nSent feedback to broadcaster: {encoded_data}")
         except Exception as e:
             print(f"\nError sending message: {e}")
 
@@ -91,7 +91,7 @@ class ReceiverSender:
         encoded_data = json.dumps(data).encode('utf-8')
         try:
             self.send_socket.sendto(encoded_data, ('127.0.0.1', listener_port))
-            print(f"\nSent to additional listener on port {listener_port}: {message}")
+            print(f"\nSent to additional listener on port {listener_port}: {encoded_data}")
         except Exception as e:
             print(f"\nError sending to additional listener: {e}")
 

@@ -66,7 +66,7 @@ class ReceiverSender:
         encoded_data = json.dumps(data).encode('utf-8')
         try:
             self.send_socket.sendto(encoded_data, ('255.255.255.255', self.broadcaster_port))
-            print(f"\nSent to broadcaster: {message}")
+            print(f"\nSent feedback to broadcaster: {encoded_data}")
         except Exception as e:
             print(f"\nError sending message: {e}")
 
@@ -91,7 +91,7 @@ class ReceiverSender:
         encoded_data = json.dumps(data).encode('utf-8')
         try:
             self.send_socket.sendto(encoded_data, ('127.0.0.1', listener_port))
-            print(f"\nSent to additional listener on port {listener_port}: {message}")
+            print(f"\nSent to additional listener on port {listener_port}: {encoded_data}")
         except Exception as e:
             print(f"\nError sending to additional listener: {e}")
 
@@ -161,7 +161,6 @@ def M_init(user_prompt, history):
     except Exception as e:
         return f"error occured {e}"
 
-
 def GPT_response(user_prompt, history):
     prompt = prompt_dict.get(NAME) + f"""
                     This is the history: {history}
@@ -182,10 +181,10 @@ def GPT_response(user_prompt, history):
 
         # parse the output for the json and work summary etc.
 
-        json = re.findall('@@@json.*@@@', output, re.DOTALL)
+        json_list = re.findall('@@@json.*@@@', output, re.DOTALL)
         work_summary = re.findall('$$$summary.*$$$', output, re.DOTALL)
         
-        return (json, work_summary)
+        return (json_list, work_summary)
 
     except Exception as e:
         print(f"Error generating GPT response: {e}")
@@ -210,7 +209,7 @@ if __name__ == "__main__":
 
                     # Now run the GPT model to generate the json
 
-                    receiver.send_message(work_summary)                                          # sending feedback
+                    receiver.send_message(work_summary)                                              # sending feedback
                     receiver.send_to_GPT_breakout(json_list, user_prompt, work_summary)               # sending to GPT breakout    
             time.sleep(0.1)
             
