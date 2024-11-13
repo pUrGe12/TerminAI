@@ -117,41 +117,62 @@ prompt_init_dict = {
 						""",
 }
 
+# These prompts should be tailored to the type of work they are performing
+
+# For example
+# If it is detecting file operations, then the json should contain the following at least,
+# Which file to open? Name and location? etc..
+# What to do after opening? Read? Write? 
+# Parse a directory? List its contents? Then which directory and what?
+# The json should output these... tailored to each model seperately.
+
+# LEARNT about pyautogui
+
 prompt_dict = {
-	"client_5001": f"""
-				    You will be given a prompt and a history of prompts and responses. The user wants to perform some file operations. 
-				    File operations means:
-							1. If the user wants to open, close, read, change permissions, write, create, delete etc. has anything to do with files.
-							2. We are not restricted to files, if the user wants to create a directory, then it required file operations as well.
-							3. Any user request (based on the history as well) that requires them to perform operations in a file.
-							4. There may be more cases which you will have to judge accordingly.
+	"client_5001": """
+				    You will be given a prompt and a history of prompts and responses. The user wants to perform file or directory operations.
 
-					Your task is two folds, 
+					**File or Directory Operations** are any actions that directly interact with files or directories. These include:
+					  - Opening, closing, reading, writing, deleting, or creating files.
+					  - Changing permissions, modifying, or listing directories.
+					  - Any command that requires interaction with a file or directory based on the current prompt or history.
 
-				    1. Generate a json type object that contains necessary fields for the action the user wants to perform.
-				    2. Generate a summary in less than 20 words, of what you did and the necessary parameters to achieve the user's actions.
+					**Your Task**:
+					1. Generate a JSON object containing **all required parameters** for the operation based on the user's request.
+					   - **Required Fields in JSON**:
+					     - **operation**: Specify the action (e.g., "open", "write", "delete").
+					     - **path**: Full path of the target file or directory.
+					     - **additional_params**: Any other parameters relevant to the operation (e.g., "mode: read-only" for file reads, "permissions: 755" for chmod).
+					   - **Include only necessary parameters**. Exclude fields that do not apply to the specific operation.
 
-				    First output the json object. It should be formatted exactly as below. It should begin with three '@' followed by the word 'json', that is, '@@@json' 
-				    and it should end with three '@', that is, '@@@'.
-				    
-				    @@@json
-				    'param_1': 'value_1',
-				    'param_2': 'value_2',
-				    ...
-				    'param_n': 'value_n'
-				    @@@
-				    
-				    After this, output the summary. It should be formatted exactly as below. It should begin with three "$" followed by the word 'summary', that is, '$$$summary'
-				    and it should end with three '$', that is, '$$$'.
+					2. Generate a summary of the operation in **under 20 words**.
+					   - The summary should **describe the action performed** and include essential parameters (e.g., "Opened file in read mode at /path/to/file").
 
-				    $$$summary
-				    <text here>
-				    $$$
+					**Output Format**:
+					- **JSON Object**: Start the JSON with `@@@json` and end it with `@@@`.
+					- **Summary**: Start the summary with `$$$summary` and end it with `$$$`.
+
+					**Example Output**:
+
+					@@@json
+					{
+					  "operation": "open",
+					  "path": "/path/to/file",
+					  "mode": "read-only"
+					}
+					@@@
+
+					$$$summary
+					Opened file in read-only mode at /path/to/file.
+					$$$
+
+					**Important**: Generate only the JSON and summary as specified, formatted exactly as instructed.
+
 
 				    That's it.
 				    """,
 
-	"client_5002": f"""
+	"client_5002": """
 				    You will be given a prompt and a history of prompts and responses. The user wants to perform some OS level operations. 
 
 				    os level operations means:
@@ -186,7 +207,7 @@ prompt_dict = {
 				    That's it.
 				    """,
 
-	"client_5003": f"""
+	"client_5003": """
 				    You will be given a prompt and a history of prompts and responses. The user wants to perform some application level operations. Your task is two folds, 
 
 				    Application level operations means:
@@ -218,7 +239,7 @@ prompt_dict = {
 
 				    That's it.
 				    """,
-	"client_5004": f"""
+	"client_5004": """
 				    You will be given a prompt and a history of prompts and responses. The user wants to perform some network level operations. Your task is two folds, 
 
 				    Network level operations are,
@@ -250,7 +271,7 @@ prompt_dict = {
 
 				    That's it.
 				    """,
-	"client_5005": f"""
+	"client_5005": """
 				    You will be given a prompt and a history of prompts and responses. The user wants to perform some installation level operations. Your task is two folds, 
 
 				    Installation operations are,
@@ -281,7 +302,7 @@ prompt_dict = {
 
 				    That's it.
 				    """,
-	"client_5006": f"""
+	"client_5006": """
 				    You will be given a prompt and a history of prompts and responses. The user wants to perform some content genration operations. Your task is two folds, 
 
 				    Content generation operations are
