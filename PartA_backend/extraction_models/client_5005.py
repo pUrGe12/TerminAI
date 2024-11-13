@@ -158,6 +158,8 @@ def M_init(user_prompt, history):
             return True
         else:
             return False
+    except Exception as e:
+        return f"error occured {e}"
 
 
 def GPT_response(user_prompt, history):
