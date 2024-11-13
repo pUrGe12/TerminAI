@@ -118,198 +118,466 @@ prompt_init_dict = {
 }
 
 prompt_dict = {
-	"client_5001": f"""
-				    You will be given a prompt and a history of prompts and responses. The user wants to perform some file operations. 
-				    File operations means:
-							1. If the user wants to open, close, read, change permissions, write, create, delete etc. has anything to do with files.
-							2. We are not restricted to files, if the user wants to create a directory, then it required file operations as well.
-							3. Any user request (based on the history as well) that requires them to perform operations in a file.
-							4. There may be more cases which you will have to judge accordingly.
+	"client_5001": """
+				    You will be given a prompt and a history of prompts and responses. The user wants to perform file or directory operations.
 
-					Your task is two folds, 
+					**File or Directory Operations** are any actions that directly interact with files or directories. These include:
+					  - Opening, closing, reading, writing, deleting, or creating files.
+					  - Changing permissions, modifying, or listing directories.
+					  - Any command that requires interaction with a file or directory based on the current prompt or history.
 
-				    1. Generate a json type object that contains necessary fields for the action the user wants to perform.
-				    2. Generate a summary in less than 20 words, of what you did and the necessary parameters to achieve the user's actions.
+					**Your Task**:
+					1. Generate a JSON object containing **all required parameters** for the operation based on the user's request.
+					   - **Required Fields in JSON**:
+					     - **operation**: Specify the action (e.g., "open", "write", "delete").
+					     - **path**: Full path of the target file or directory.
+					     - **additional_params**: Any other parameters relevant to the operation (e.g., "mode: read-only" for file reads, "permissions: 755" for chmod).
+					   
+					   There might be more relevant fields, include that as well. Include everything that is necessary.
 
-				    First output the json object. It should be formatted exactly as below. It should begin with three '@' followed by the word 'json', that is, '@@@json' 
-				    and it should end with three '@', that is, '@@@'.
-				    
-				    @@@json
-				    'param_1': 'value_1',
-				    'param_2': 'value_2',
-				    ...
-				    'param_n': 'value_n'
-				    @@@
-				    
-				    After this, output the summary. It should be formatted exactly as below. It should begin with three "$" followed by the word 'summary', that is, '$$$summary'
-				    and it should end with three '$', that is, '$$$'.
+					2. Generate a summary of the operation in **under 20 words**.
+					   - The summary should **describe the action performed** and include essential parameters (e.g., "Opened file in read mode at /path/to/file").
 
-				    $$$summary
-				    <text here>
-				    $$$
+					**Output Format**:
+					- **JSON Object**: Start the JSON with `@@@json` and end it with `@@@`.
+					- **Summary**: Start the summary with `$$$summary` and end it with `$$$`.
+
+					**Example Output** (These are examples, you do not have to follow them exactly but they are a good reference point):
+
+					@@@json
+					{
+					  "operation": "open",
+					  "path": "/path/to/file",
+					  "mode": "read-only"
+					}
+					@@@
+
+					$$$summary
+					Opened file in read-only mode at /path/to/file.
+					$$$
+
+					**Important**: Generate only the JSON and summary as specified, formatted exactly as instructed.
+
 
 				    That's it.
 				    """,
 
-	"client_5002": f"""
-				    You will be given a prompt and a history of prompts and responses. The user wants to perform some OS level operations. 
+	"client_5002": """
+				You will be given a prompt and a history of prompts and responses. The user wants to perform OS-level operations on their system.
 
-				    os level operations means:
-							1. If the user wants to get the number of CPU cores, the total available storage, or any processor or hardware related information.
-							2. If the user wants to change file permissions, kill running process, anything that might involve the use of systemctl in linux.
-							3. If the user wants to reboot, install an update, shut down the computer. 
-							4. If the user wants to change brightness, change volume etc.
-							5. There might be more cases, but use these examples to create a sphere of possible entries in this category.
+				**OS-Level Operations** include any actions that interact with the operating system directly. These may include, but are not limited to:
+				  1. **System Information**: Retrieving details like the number of CPU cores, total available storage, RAM usage, or other hardware-related information.
+				  2. **System Management**: Managing processes, changing file permissions, using `systemctl` commands in Linux (e.g., to start, stop, enable, or disable services).
+				  3. **System Control**: Rebooting, shutting down, installing updates, or other actions that affect the system's state.
+				  4. **Device Settings**: Adjusting brightness, changing volume, or other hardware settings.
+				  
+				**Your Task**:
+				1. **Generate a JSON object** that contains all necessary fields for the OS-level action requested. Tailor each field specifically to the type of operation.
+				   - **Required Fields in JSON**:
+				     - **operation**: Specify the action (e.g., "get_cpu_cores", "shutdown", "change_volume").
+				     - **target**: Describe the target if applicable (e.g., "CPU", "volume", "brightness", or "service name" for systemctl actions).
+				     - **parameters**: List any additional parameters or settings relevant to the action (e.g., "level: 75" for volume, "permissions: 755" for chmod).
+				     - **confirmation_required**: Specify if the operation requires confirmation (e.g., `true` for reboot or shutdown actions).
+				   
+				   There might be more relevant fields, include that as well. Include everything that is necessary.
 
-				    Your task is two folds, 
+				2. **Generate a summary** of the action performed in under 20 words.
+				   - The summary should **describe the action** (e.g., "Adjusted volume to 50%" or "Retrieved CPU core count").
 
-				    1. Generate a json type object that contains necessary fields for the action the user wants to perform.
-				    2. Generate a summary in less than 20 words, of what you did and the necessary parameters to achieve the user's actions.
-
-				    First output the json object. It should be formatted exactly as below. It should begin with three '@' followed by the word 'json', that is, '@@@json' 
-				    and it should end with three '@', that is, '@@@'.
-				    
-				    @@@json
-				    'param_1': 'value_1',
-				    'param_2': 'value_2',
+				**Output Format**:
+				- **JSON Object**: Format the JSON output exactly as shown below. Begin with `@@@json` and end with `@@@`.
+				  
+				@@@json
+				{
+				  "operation": "value",
+				  "target": "value",
+				  "parameters": {
+				    "param_1": "value",
+				    "param_2": "value",
 				    ...
-				    'param_n': 'value_n'
-				    @@@
-				    
-				    After this, output the summary. It should be formatted exactly as below. It should begin with three "$" followed by the word 'summary', that is, '$$$summary'
-				    and it should end with three '$', that is, '$$$'.
+				  },
+				  "confirmation_required": true/false
+				}
+				@@@
 
-				    $$$summary
-				    <text here>
-				    $$$
+				- **Summary**: Format the summary exactly as shown below. Begin with `$$$summary` and end with `$$$`.
 
-				    That's it.
+				$$$summary
+				<summary text>
+				$$$
+
+				**Example Output** (These are examples, you do not have to follow them exactly but they are a good reference point):
+
+				For a request to adjust system volume:
+				  
+				@@@json
+				{
+				  "operation": "change_volume",
+				  "target": "volume",
+				  "parameters": {
+				    "level": 75
+				  },
+				  "confirmation_required": false
+				}
+				@@@
+
+				$$$summary
+				Set volume to 75%.
+				$$$
+
+				For a request to retrieve CPU core count:
+
+				@@@json
+				{
+				  "operation": "get_cpu_cores",
+				  "target": "CPU",
+				  "parameters": {},
+				  "confirmation_required": false
+				}
+				@@@
+
+				$$$summary
+				Retrieved CPU core count.
+				$$$
+
+				**Important**: Generate only the JSON and summary exactly as specified, following the formatting strictly.
+
 				    """,
 
-	"client_5003": f"""
-				    You will be given a prompt and a history of prompts and responses. The user wants to perform some application level operations. Your task is two folds, 
+	"client_5003": """
+				    You will be given a prompt and a history of prompts and responses. The user wants to perform application-level operations on their system.
 
-				    Application level operations means:
-							1. If the user wants to open or close an application like a web-browser, open a website, close an application.
-							2. If the prompt requires the working of a certain application. For example, opening an image, requires using the open command which opens the image editor.
-							3. Any operation that requires the launch of a GUI application. Reading a pdf file is a application level operation, because it requires opening a pdf reader. (the command is open only)
-							4. There might be more cases, but use these examples to create a sphere of possible entries in this category.
+					**Application-Level Operations** include any actions that involve opening or managing GUI applications. Examples include:
+					  1. **Launching Applications**: Starting applications like a web browser, PDF reader, or media player.
+					  2. **Closing Applications**: Closing an open GUI application.
+					  3. **Interacting with GUI Applications**: Opening specific files (e.g., reading a PDF), visiting websites, or performing tasks that require launching a graphical user interface.
+					  
+					  **Note**: Application-level operations always involve actions that launch or interact with GUI-based applications. Running commands without a GUI (e.g., terminal commands) does **not** count as an application-level operation.
 
+					**Your Task**:
+					1. **Generate a JSON object** that includes all required fields for the user’s application-level action. Structure each field based on the type of application-level operation.
+					   - **Required Fields in JSON**:
+					     - **operation**: Specify the action (e.g., "open", "close").
+					     - **application_name**: The name of the application to open or close (e.g., "Chrome", "PDF Reader").
+					     - **file_path** (optional): Specify the file to open if applicable (e.g., path to a PDF for a PDF reader).
+					     - **url** (optional): Specify the website URL if the action is to open a specific webpage in a browser.
+					  
+					   There might be more relevant fields, include that as well. Include everything that is necessary. 
 
-				    1. Generate a json type object that contains necessary fields for the action the user wants to perform.
-				    2. Generate a summary in less than 20 words, of what you did and the necessary parameters to achieve the user's actions.
+					2. **Generate a summary** of the action performed in under 20 words.
+					   - The summary should **describe the action** clearly and succinctly (e.g., "Opened Chrome and navigated to website" or "Closed PDF reader").
 
-				    First output the json object. It should be formatted exactly as below. It should begin with three '@' followed by the word 'json', that is, '@@@json' 
-				    and it should end with three '@', that is, '@@@'.
-				    
-				    @@@json
-				    'param_1': 'value_1',
-				    'param_2': 'value_2',
-				    ...
-				    'param_n': 'value_n'
-				    @@@
-				    
-				    After this, output the summary. It should be formatted exactly as below. It should begin with three "$" followed by the word 'summary', that is, '$$$summary'
-				    and it should end with three '$', that is, '$$$'.
+					**Output Format**:
+					- **JSON Object**: Format the JSON output exactly as shown below. Begin with `@@@json` and end it with `@@@`.
 
-				    $$$summary
-				    <text here>
-				    $$$
+					@@@json
+					{
+					  "operation": "value",
+					  "application_name": "value",
+					  "file_path": "optional value",
+					  "url": "optional value"
+					}
+					@@@
 
-				    That's it.
+					- **Summary**: Format the summary exactly as shown below. Begin with `$$$summary` and end with `$$$`.
+
+					$$$summary
+					<summary text>
+					$$$
+
+					**Example Outputs** (These are examples, you do not have to follow them exactly but they are a good reference point):
+
+					1. For a request to open a PDF file with a PDF reader:
+					  
+					@@@json
+					{
+					  "operation": "open",
+					  "application_name": "PDF Reader",
+					  "file_path": "/path/to/document.pdf"
+					}
+					@@@
+
+					$$$summary
+					Opened PDF Reader with document at /path/to/document.pdf.
+					$$$
+
+					2. For a request to close a browser:
+					  
+					@@@json
+					{
+					  "operation": "close",
+					  "application_name": "Chrome"
+					}
+					@@@
+
+					$$$summary
+					Closed Chrome browser.
+					$$$
+
+					3. For a request to open a website in Chrome:
+
+					@@@json
+					{
+					  "operation": "open",
+					  "application_name": "Chrome",
+					  "url": "https://example.com"
+					}
+					@@@
+
+					$$$summary
+					Opened Chrome and navigated to https://example.com.
+					$$$
+
+					**Important**: Generate only the JSON and summary exactly as specified, following the formatting strictly.
+
 				    """,
-	"client_5004": f"""
-				    You will be given a prompt and a history of prompts and responses. The user wants to perform some network level operations. Your task is two folds, 
+	"client_5004": """
+				    You will be given a prompt and a history of prompts and responses. The user wants to perform network-level operations on their system.
 
-				    Network level operations are,
-							1. Switching on and off wifi or bluetooth. Checking which devices are available via WIFI or bluetooth.
-							2. Checking which devices are connected via USB ports, etc. 
-							3. If the user asks to record the packages via wireshark or crack wifi passwords via aircrack-ng. If the prompt involves any networking related query.
-							4. If the user wants to make a IP scan, connect to a certain IP and port, connect via ssh, openssl etc. 
-							5. There might be more cases, but use these examples to create a sphere of possible entries in this category.
+					**Network-Level Operations** include any actions related to network management, monitoring, and device connectivity. Examples include:
+					  1. **Managing Connections**: Switching on or off Wi-Fi or Bluetooth, and listing available devices for these connections.
+					  2. **Device Connectivity**: Checking which devices are connected via USB, Bluetooth, or other network interfaces.
+					  3. **Network Monitoring**: Using tools like Wireshark for packet recording, or Aircrack-ng for analyzing Wi-Fi networks (e.g., packet recording, password cracking).
+					  4. **IP and Port Scans**: Running IP scans, connecting to a specific IP and port, or using SSH, OpenSSL, or similar tools.
+					  
+					  **Note**: These tasks do not require a GUI application. Network-level operations may involve command-line utilities but should pertain strictly to networking, connectivity, or device communication.
 
-				    1. Generate a json type object that contains necessary fields for the action the user wants to perform.
-				    2. Generate a summary in less than 20 words, of what you did and the necessary parameters to achieve the user's actions.
+					**Your Task**:
+					1. **Generate a JSON object** that includes all necessary fields for the user’s network-level action. Tailor each field specifically to the type of operation.
+					   - **Required Fields in JSON**:
+					     - **operation**: Specify the action (e.g., "turn_on_wifi", "scan_network", "connect_via_ssh").
+					     - **target**: Describe the target device, IP address, or interface if applicable (e.g., "Wi-Fi", "00:11:22:33:44:55" for a Bluetooth device, or "192.168.1.1").
+					     - **parameters**: List additional parameters relevant to the action (e.g., "port: 22" for SSH, "timeout: 60s" for a scan).
+					     - **confirmation_required**: Specify if the operation requires confirmation (e.g., `true` for sensitive actions like network scans).
+					   
+					   There might be more relevant fields, include that as well. Include everything that is necessary. 
 
-				    First output the json object. It should be formatted exactly as below. It should begin with three '@' followed by the word 'json', that is, '@@@json' 
-				    and it should end with three '@', that is, '@@@'.
-				    
-				    @@@json
-				    'param_1': 'value_1',
-				    'param_2': 'value_2',
-				    ...
-				    'param_n': 'value_n'
-				    @@@
-				    
-				    After this, output the summary. It should be formatted exactly as below. It should begin with three "$" followed by the word 'summary', that is, '$$$summary'
-				    and it should end with three '$', that is, '$$$'.
+					2. **Generate a summary** of the action performed in under 20 words.
+					   - The summary should **describe the action** briefly and clearly (e.g., "Turned on Wi-Fi" or "Scanned network for active devices").
 
-				    $$$summary
-				    <text here>
-				    $$$
+					**Output Format**:
+					- **JSON Object**: Format the JSON output exactly as shown below. Begin with `@@@json` and end with `@@@`.
 
-				    That's it.
+					@@@json
+					{
+					  "operation": "value",
+					  "target": "value",
+					  "parameters": {
+					    "param_1": "value",
+					    "param_2": "value",
+					    ...
+					  },
+					  "confirmation_required": true/false
+					}
+					@@@
+
+					- **Summary**: Format the summary exactly as shown below. Begin with `$$$summary` and end with `$$$`.
+
+					$$$summary
+					<summary text>
+					$$$
+
+					**Example Outputs** (These are examples, you do not have to follow them exactly but they are a good reference point):
+
+					1. For a request to turn on Wi-Fi:
+
+					@@@json
+					{
+					  "operation": "turn_on_wifi",
+					  "target": "Wi-Fi",
+					  "parameters": {},
+					  "confirmation_required": false
+					}
+					@@@
+
+					$$$summary
+					Turned on Wi-Fi connection.
+					$$$
+
+					2. For a request to perform an IP scan:
+
+					@@@json
+					{
+					  "operation": "scan_network",
+					  "target": "192.168.1.0/24",
+					  "parameters": {
+					    "timeout": "30s",
+					    "scan_type": "ping"
+					  },
+					  "confirmation_required": true
+					}
+					@@@
+
+					$$$summary
+					Scanned network 192.168.1.0/24 with a 30-second timeout.
+					$$$
+
+					3. For a request to connect to an IP via SSH:
+
+					@@@json
+					{
+					  "operation": "connect_via_ssh",
+					  "target": "192.168.1.15",
+					  "parameters": {
+					    "port": 22,
+					    "username": "user"
+					  },
+					  "confirmation_required": false
+					}
+					@@@
+
+					$$$summary
+					Connected to 192.168.1.15 via SSH.
+					$$$
+
+					**Important**: Generate only the JSON and summary exactly as specified, following the formatting strictly.
+
 				    """,
-	"client_5005": f"""
-				    You will be given a prompt and a history of prompts and responses. The user wants to perform some installation level operations. Your task is two folds, 
+	"client_5005": """
+					You will be given a prompt and some history. Your task is to determine if the given prompt requires any installation operations.
 
-				    Installation operations are,
-							1. If the user wants to install a certain application, a file or similar things.
-							2. If the user wants to install a python package, a ruby package, or a snap package anything. 
-							3. If the user wants to install something that would involve the code "sudo apt-get" or "snap install" or "pip install". 
-							4. There might be more cases, but use these examples to create a sphere of possible entries in this category.
+					**Installation Operations** include any user requests that involve adding software, packages, or dependencies to the system. Examples include:
+					  1. **Installing Applications**: If the user requests the installation of a specific application, file, or other software.
+					  2. **Installing Programming Packages**: Installing Python packages (e.g., via `pip install`), Ruby packages (e.g., via `gem install`), or system packages (e.g., via `sudo apt-get install` or `snap install`).
+					  3. **Related Commands**: Any command that installs software, libraries, or dependencies, such as "install", "add", "setup", using commands like `sudo apt-get`, `pip install`, or similar.
+					  
+					  **Note**: Any operation that involves adding new software, packages, or dependencies should be categorized as an installation operation.
 
-				    1. Generate a json type object that contains necessary fields for the action the user wants to perform.
-				    2. Generate a summary in less than 20 words, of what you did and the necessary parameters to achieve the user's actions.
+					**Your Task**:
+					1. **Generate a JSON object** containing all necessary fields for the installation action specified by the user. Each field should be tailored to the installation requirements.
+					   - **Required Fields in JSON**:
+					     - **operation**: Specify the action, such as "install_application" or "install_package".
+					     - **package_name**: Specify the name of the application or package to be installed (e.g., "numpy", "curl").
+					     - **install_method**: Specify the installation method (e.g., "apt-get", "pip", "snap").
+					     - **options**: Include any additional options or flags (e.g., `--upgrade` for pip).
 
-				    First output the json object. It should be formatted exactly as below. It should begin with three '@' followed by the word 'json', that is, '@@@json' 
-				    and it should end with three '@', that is, '@@@'.
-				    
-				    @@@json
-				    'param_1': 'value_1',
-				    'param_2': 'value_2',
-				    ...
-				    'param_n': 'value_n'
-				    @@@
-				    
-				    After this, output the summary. It should be formatted exactly as below. It should begin with three "$" followed by the word 'summary', that is, '$$$summary'
-				    and it should end with three '$', that is, '$$$'.
+					  There might be more relevant fields, include that as well. Include everything that is necessary.
 
-				    $$$summary
-				    <text here>
-				    $$$
+					2. **Generate a summary** of the installation action performed in under 20 words.
+					   - The summary should **describe the action** concisely and clearly (e.g., "Installed numpy using pip" or "Installed curl via apt-get").
 
-				    That's it.
-				    """,
-	"client_5006": f"""
-				    You will be given a prompt and a history of prompts and responses. The user wants to perform some content genration operations. Your task is two folds, 
+					**Output Format**:
+					- **JSON Object**: Format the JSON output exactly as shown below. Begin with `@@@json` and end it with `@@@`.
 
-				    Content generation operations are
-							1. If the user wants nothing but some content to be generated. 
-							2. If the user is not demanding any change that would require a os.system() command in python. 
-							3. If the prompt asks for something that just needs to be printed and no other operation is required.
+					@@@json
+					{
+					  "operation": "value",
+					  "package_name": "value",
+					  "install_method": "value",
+					  "options": ["optional_value_1", "optional_value_2", ...]
+					}
+					@@@
 
-				    1. Generate a json type object that contains necessary fields for the action the user wants to perform.
-				    2. Generate a summary in less than 20 words, of what you did and the necessary parameters to achieve the user's actions.
+					- **Summary**: Format the summary exactly as shown below. Begin with `$$$summary` and end it with `$$$`.
 
-				    First output the json object. It should be formatted exactly as below. It should begin with three '@' followed by the word 'json', that is, '@@@json' 
-				    and it should end with three '@', that is, '@@@'.
-				    
-				    @@@json
-				    'param_1': 'value_1',
-				    'param_2': 'value_2',
-				    ...
-				    'param_n': 'value_n'
-				    @@@
-				    
-				    After this, output the summary. It should be formatted exactly as below. It should begin with three "$" followed by the word 'summary', that is, '$$$summary'
-				    and it should end with three '$', that is, '$$$'.
+					$$$summary
+					<summary text>
+					$$$
 
-				    $$$summary
-				    <text here>
-				    $$$
+					**Example Outputs** (These are examples, you do not have to follow them exactly but they are a good reference point):
 
-				    That's it.
+					1. For a request to install numpy using pip:
+
+					@@@json
+					{
+					  "operation": "install_package",
+					  "package_name": "numpy",
+					  "install_method": "pip",
+					  "options": ["--upgrade"]
+					}
+					@@@
+
+					$$$summary
+					Installed numpy with pip and upgrade flag.
+					$$$
+
+					2. For a request to install VLC using apt-get:
+
+					@@@json
+					{
+					  "operation": "install_application",
+					  "package_name": "vlc",
+					  "install_method": "apt-get",
+					  "options": []
+					}
+					@@@
+
+					$$$summary
+					Installed VLC using apt-get.
+					$$$
+
+					**Important**: Generate only the JSON and summary exactly as specified, following the formatting strictly.
+
+	""",
+	"client_5006": """
+					You will be given a prompt and a history of prompts and responses. The user wants to perform a content generation operation.
+
+					**Content Generation Operations** include requests where the user requires generated content only, without any command execution or system-level operations. Examples include:
+					  1. **Direct Content Creation**: The user requests text, messages, summaries, examples, or other content without needing interaction with the operating system.
+					  2. **No System Commands**: The request does not involve system-level commands (e.g., `os.system()` in Python) or require interacting with applications or files.
+					  3. **Output-Only**: The generated content only needs to be displayed or printed without further processing or external action.
+
+					**Your Task**:
+					1. **Generate a JSON object** containing necessary fields for the content generation action requested by the user. Include only fields relevant to the content generation request.
+					   - **Required Fields in JSON**:
+					     - **operation**: Describe the action, such as "generate_text", "summarize_content", or "generate_example".
+					     - **content_type**: Specify the type of content requested (e.g., "text", "summary", "example").
+					     - **details**: Include any additional details relevant to the content (e.g., "Generate a summary of the provided paragraph").
+
+					  There might be more relevant fields, include that as well. Include everything that is necessary.
+
+					2. **Generate a summary** of the content generation action in under 20 words.
+					   - The summary should **clearly state the content generation task performed** (e.g., "Generated a summary of the input text" or "Created an example based on user input").
+
+					**Output Format**:
+					- **JSON Object**: Format the JSON output exactly as shown below. Begin with `@@@json` and end it with `@@@`.
+
+					@@@json
+					{
+					  "operation": "value",
+					  "content_type": "value",
+					  "details": "value"
+					}
+					@@@
+
+					- **Summary**: Format the summary exactly as shown below. Begin with `$$$summary` and end it with `$$$`.
+
+					$$$summary
+					<summary text>
+					$$$
+
+					**Example Outputs** (These are examples, you do not have to follow them exactly but they are a good reference point):
+
+					1. For a request to generate an example sentence:
+
+					@@@json
+					{
+					  "operation": "generate_example",
+					  "content_type": "text",
+					  "details": "Generate an example sentence using the word 'inquisitive'."
+					}
+					@@@
+
+					$$$summary
+					Generated an example sentence with the word 'inquisitive'.
+					$$$
+
+					2. For a request to summarize a paragraph:
+
+					@@@json
+					{
+					  "operation": "summarize_content",
+					  "content_type": "summary",
+					  "details": "Summarize the provided paragraph on climate change."
+					}
+					@@@
+
+					$$$summary
+					Created a summary of the paragraph on climate change.
+					$$$
+
+					**Important**: Follow the formatting strictly and generate only the JSON and summary as specified.
+
 				    """,
 
 }
