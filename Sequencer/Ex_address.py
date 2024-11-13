@@ -10,112 +10,138 @@ function_dict = {
 
 prompt_init_dict = {
 	'client_5001_init': f"""
-							You will be given a prompt and some history. Your task is to figure out if the given prompt requires any file operations.
+		You will be given a prompt and some history. Your task is to determine if the given prompt requires any file operations.
 
-							File operations means:
-							1. If the user wants to open, close, read, write, create, delete etc. has anything to do with files.
-							2. We are not restricted to files, if the user wants to create a directory, then it required file operations as well.
-							3. Any user request (based on the history as well) that requires them to perform operations in a file.
-							4. There may be more cases which you will have to judge accordingly.
+		**File Operations**:
+		1. If the user wants to create, open, close, read, write, or delete a file, or perform any other action related to files.
+		2. Requests involving directories (e.g., creating, deleting, or managing folders) are also considered file operations.
+		3. Any user request, based on the prompt or history, that involves file manipulation counts as a file operation.
+		4. Examples:
+		   - Writing content to a specific file path.
+		   - Creating or moving files or directories.
 
-							If the prompt has anything to do with file operations, output a simple "yes".
-							If the prompt has nothing to do with file operations, output a simple "no".
+		If the prompt requires any file operation, output "yes".
+		If the prompt does not involve file operations, output "no".
 
-							Eg. Write a 500 word essay in a file in desktop
-							your output = yes
+		**Examples**:
+		Prompt: Write a 500-word essay to a file on the desktop.
+		Output: yes (reason: Writing content to a file is a file operation.)
 
-							reason > writing a file to desktop means there are file operations being performed here. 
+		Prompt: Write a 500-word essay about Lincoln.
+		Output: no (reason: This only requests content generation without file operations.)
 
-							Eg. Crack the hash "abcd" and write the answer to a new directory in the desktop, create a file.
-							your output = yes
+		Use the history for additional context.
+	""",
 
-							reason > creating a directory and file are file operations.
-
-							Eg. Write a 5000 word essay on abraham lincon
-							your output = no
-
-							reason > Its just asking for an essay, not asking for it to be written to a file.
-
-							Note that these may change depending on history.
-						""",
 	'client_5002_init': f"""
-							You will be given a prompt and some history. Your task is to figure out if the given prompt requires any OS operations.
+		You will be given a prompt and some history. Your task is to determine if the given prompt requires any OS-level operations.
 
-							OS level operations means:
-							1. If the user wants to get the number of CPU cores, the total available storage, or any processor or hardware related information.
-							2. If the user wants to change file permissions, kill running process, anything that might involve the use of systemctl in linux.
-							3. If the user wants to reboot, install an update, shut down the computer, check the battery level, status etc.
-							4. If the user wants to change brightness, change volume etc.
-							5. There might be more cases, but use these examples to create a sphere of possible entries in this category.
+		**OS-Level Operations**:
+		1. Requests for system information (e.g., CPU cores, available storage, hardware info).
+		2. Managing system processes or configurations (e.g., changing file permissions, killing processes, using system services).
+		3. Requests to perform system-wide actions like rebooting, updating, shutting down, or checking system status (e.g., battery, brightness, volume).
+		4. Any other system operation that directly interacts with or modifies the operating system.
+		5. Examples:
+		   - Rebooting the system or viewing system settings.
 
-							If the prompt has anything to do with OS level operations, output a simple "yes".
-							If the prompt has nothing to do with OS level operations, output a simple "no".
-						""",
+		If the prompt requires any OS-level operation, output "yes".
+		If the prompt does not involve OS-level operations, output "no".
+
+		**Examples**:
+		Prompt: Check the available system storage.
+		Output: yes (reason: Retrieving system storage is an OS-level operation.)
+
+		Prompt: Write a paragraph on renewable energy.
+		Output: no (reason: The request only involves content generation, not system-level interaction.)
+	""",
 
 	'client_5003_init': f"""
-							you will be given a prompt and some history. Your task is to figure out if the given prompt requires any application operations.
-							
-							Application level operations means:
-							1. If the user wants to open or close an application like a web-browser, open a website, close an application.
-							2. If the prompt requires the working of a certain application. For example, opening an image, requires using the open command which opens the image editor.
-							3. Any operation that requires the launch of a GUI application. Reading a pdf file is a application level operation, because it requires opening a pdf reader. (the command is open only)
-							4. There might be more cases, but use these examples to create a sphere of possible entries in this category.
+		You will be given a prompt and some history. Your task is to determine if the given prompt requires any application-level operations.
 
-							If the prompt has anything to do with Application level operations, output a simple "yes".
-							If the prompt has nothing to do with Application level operations, output a simple "no".
-						""",
+		**Application-Level Operations**:
+		1. Opening, closing, or interacting with GUI applications (e.g., opening a web browser, viewing a PDF).
+		2. Launching applications that require a graphical interface.
+		3. Any operation that requires the use of an application to access or display content (e.g., opening a document in a text editor).
+		4. Examples:
+		   - Opening a web page in a browser or a PDF in a PDF reader.
+
+		If the prompt requires any application-level operation, output "yes".
+		If the prompt does not involve application-level operations, output "no".
+
+		**Examples**:
+		Prompt: Open the calculator app.
+		Output: yes (reason: This requires launching a GUI application.)
+
+		Prompt: List all prime numbers under 50.
+		Output: no (reason: This is a content generation task without application-specific interaction.)
+	""",
 
 	'client_5004_init': f"""
-							you will be given a prompt and some history. Your task is to figure out if the given prompt requires any network operations.
+		You will be given a prompt and some history. Your task is to determine if the given prompt requires any network operations.
 
-							Network level operations are,
-							1. Switching on and off wifi or bluetooth. Checking which devices are available via WIFI or bluetooth.
-							2. Checking which devices are connected via USB ports, etc. 
-							3. If the user asks to record the packages via wireshark or crack wifi passwords via aircrack-ng. If the prompt involves any networking related query.
-							4. If the user wants to make a IP scan, connect to a certain IP and port, connect via ssh, openssl etc. 
-							5. There might be more cases, but use these examples to create a sphere of possible entries in this category.
+		**Network Operations**:
+		1. Managing network connections or devices (e.g., enabling/disabling Wi-Fi or Bluetooth, scanning devices).
+		2. Requests involving network security or monitoring tools (e.g., using Wireshark, performing IP scans, SSH connections).
+		3. Any task that requires interacting with network interfaces, such as checking IP configurations or managing Bluetooth connections.
+		4. Examples:
+		   - Enabling Wi-Fi, connecting to a Bluetooth device, or performing network scans.
 
-							If the prompt has anything to do with network related things, output a simple "yes".
-							If the prompt has nothing to do with network related things, output a simple "no".
-						""",
+		If the prompt requires any network-related operation, output "yes".
+		If the prompt does not involve network-related operations, output "no".
+
+		**Examples**:
+		Prompt: Connect to Wi-Fi network "Home_Network".
+		Output: yes (reason: Managing Wi-Fi is a network operation.)
+
+		Prompt: Explain network topologies.
+		Output: no (reason: This only involves generating content, not performing network operations.)
+	""",
+
 	'client_5005_init': f"""
-							you will be given a prompt and some history. Your task is to figure out if the given prompt requires any installation operations.
+		You will be given a prompt and some history. Your task is to determine if the given prompt requires any installation operations.
 
-							Installation operations are,
-							1. If the user wants to install a certain application, a file or similar things.
-							2. If the user wants to install a python package, a ruby package, or a snap package anything. 
-							3. If the user wants to install something that would involve the code "sudo apt-get" or "snap install" or "pip install". 
-							4. There might be more cases, but use these examples to create a sphere of possible entries in this category.
+		**Installation Operations**:
+		1. Requests to install applications, libraries, or packages (e.g., Python packages, system applications).
+		2. Commands or tasks that involve "install" operations, such as "sudo apt-get install", "pip install", or "snap install".
+		3. Any installation command, regardless of package type (e.g., Ruby gems, NPM packages).
+		4. Examples:
+		   - Installing a new application or library.
 
-							If the prompt has anything to do with installation related things, output a simple "yes".
-							If the prompt has nothing to do with installation related things, output a simple "no".
-						""",
+		If the prompt requires any installation operation, output "yes".
+		If the prompt does not involve installation operations, output "no".
+
+		**Examples**:
+		Prompt: Install NumPy for Python.
+		Output: yes (reason: This request requires installing a Python package.)
+
+		Prompt: Describe the uses of NumPy.
+		Output: no (reason: This only requests content without installation.)
+	""",
 
 	'client_5006_init': f"""
-							you will be given a prompt and some history. Your task is to figure out if the given prompt requires any content generation operations.
+		You will be given a prompt and some history. Your task is to determine if the given prompt requires content generation operations.
 
-							Content generation operations are
-							1. If the user wants nothing but some content to be generated. 
-							2. If the user is not demanding any change that would require a os.system() command in python. 
-							3. If the prompt asks for something that just needs to be printed and no other operation is required.
+		**Content Generation Operations**:
+		1. Requests to generate text or information without any further action, such as "explain", "summarize", or "list".
+		2. Content requests that do not require system commands (e.g., `os.system()`) or interaction with files or applications.
+		3. Any prompt asking for displayed or printed content without additional operations.
+		4. Examples:
+		   - Generating summaries, essays, or examples.
 
-							If the prompt has anything to do with content generation related things, output a simple "yes".
-							If the prompt has nothing to do with content generation related things, output a simple "no".
+		If the user is in a conversational tone, then the output should be "yes"
 
-							For example,
-							prompt: Write a 500 word essay on abraham lincon
-							your output: yes
+		If the prompt requires content generation, output "yes".
+		If the prompt does not involve content generation, output "no".
 
-							reason > its asking for an essay, not asking for anything else that would require any system level changes.
+		**Examples**:
+		Prompt: Write a 300-word essay on climate change.
+		Output: yes (reason: This requires content creation without other operations.)
 
-							prompt: Write a 500 word essay on abraham lincon to a file named lincon.txt in the desktop
-							your output: no
-
-							reason > its asking for an essay, but it needs it to be written to a file. This is something you can't do and it requires os.system() in python.
-
-							You will be given the history as well so do judge accordingly.
-						""",
+		Prompt: Write a 300-word essay to a file on the desktop.
+		Output: no (reason: This includes file operations for saving content.)
+	""",
 }
+
 
 prompt_dict = {
 	"client_5001": """
