@@ -192,7 +192,7 @@ def add_history(name, system_boolean, prompt, ex_work_summary):
     Adding it to version 2.
     """
 
-    Info = {'system_bool': f"{system_boolean}", 'ex_model_function': f"{function_dict.get(name)}", 'user_prompt': f"{prompt}", "ex_work_summary": f"{ex_work_summary}"}
+    Info = {'system_boolean': f"{system_boolean}", 'ex_model_function': f"{function_dict.get(name)}", 'user_prompt': f"{prompt}", "ex_work_summary": f"{ex_work_summary}"}
     response = supabase.table('History_v2').insert(Info).execute()
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------
