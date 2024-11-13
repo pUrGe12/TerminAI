@@ -21,6 +21,7 @@ Check out the terminal [here](./terminal_gui/README.md)!
 
 - [ ] Check if part A works
 - [ ] Create setup
+- [ ] We can probably use pyautogui for some 
 
 once `part A` is robust, we'll move to GPT layer.
 
