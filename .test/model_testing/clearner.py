@@ -1,4 +1,5 @@
 import re
+
 a = '''
 @@@json
 {
@@ -14,4 +15,8 @@ $$$
 
 '''
 
-print(re.findall("\$\$\$.*\$\$\$", a, re.DOTALL)[0].strip())
+# Use a capturing group to get the text between $$$summary and $$$
+match = re.search(r"\$\$\$summary\s*(.*?)\s*\$\$\$", a, re.DOTALL)
+if match:
+    result = match.group(1).strip()
+    print(result)
