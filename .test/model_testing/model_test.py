@@ -64,11 +64,11 @@ def GPT_response(user_prompt, history):
             if chunk.text:
                 output += str(chunk.text)
 
-        # Ensure parsing is inside the try block
-        json = re.findall('@@@json.*@@@', output, re.DOTALL)
-        work_summary = re.findall('$$$summary.*$$$', output, re.DOTALL)
+        json_init = re.findall('@@@json.*@@@', output, re.DOTALL)
+        json = re.findall("{.*}", json_init[0].strip(), re.DOTALL)[0].strip() # getting a nice normal string here
+        work_summary = re.findall('\$\$\$summary.*\$\$\$', output, re.DOTALL)
         
-        return (json, work_summary, output)
+        return (json, work_summary)
 
     except Exception as e:
         print(f"Error generating GPT response: {e}")
@@ -85,10 +85,9 @@ if __name__ == "__main__":
             print(answer)
             if answer == True:
                 ''' First check if the current model is required for the prompt '''
-                (json, work_summary, output) = GPT_response(user_prompt, history)
+                (json, work_summary) = GPT_response(user_prompt, history)
                 print(f"json: {json}\n")
                 print(f"work_summary: {work_summary}\n")
-                print(f"output_full: {output}")
         time.sleep(0.1)
         
     except KeyboardInterrupt:

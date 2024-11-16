@@ -183,6 +183,8 @@ prompt_dict = {
 
 					**Example Output** (These are examples, you do not have to follow them exactly but they are a good reference point):
 
+					To open a file
+
 					@@@json
 					{
 					  "operation": "open",
@@ -197,6 +199,7 @@ prompt_dict = {
 
 					**Important**: Generate only the JSON and summary as specified, formatted exactly as instructed.
 
+					The user can enter multiple commands in the same prompt, in which case there might be more than one operations in the json output.
 
 				    That's it.
 				    """,
