@@ -5,12 +5,17 @@ import json
 import queue
 from supabase import create_client, Client                                        # For database adding and pulling
 from Ex_address import function_dict                                              # For getting information on the models, to add to database
-from api_keys import supabase_key_dict                                            # For the supabase API setup
+
+import os
+from dotenv import load_dotenv
+from pathlib import Path
 
 # Supabase API setup
 
-url: str = str(supabase_key_dict.get('url'))
-key: str = str(supabase_key_dict.get('key'))
+load_dotenv(dotenv_path=Path(__file__).parent.parent / '.env')
+
+url: str = str(os.getenv("SUPABASE_URL")).strip()
+key: str = str(os.getenv("SUPABASE_KEY")).strip()
 
 supabase: Client = create_client(url, key)
 
