@@ -1,6 +1,4 @@
-# Create a 500 word essay on abraham lincon and save that to a file in the desktop --> This prompt is triggering 1 2 and 3. When it should trigger 1 and 3 at max. 
-# Cause it does require opening of the text editor and writing content is a file application.
-# Why is 2 being triggered when there are no os level operations.
+
 function_dict = {
 'client_5001': 'Check for file operations',
 'client_5002': 'Check for OS operations',
@@ -38,18 +36,11 @@ prompt_init_dict = {
 	'client_5002_init': f"""
 		You will be given a prompt and some history. Your task is to determine if the given prompt requires any OS-level operations.
 
-		Note on operating system applications:
-
-		There is a difference between user programs and operating system. Any program that is not using the restricted instructions of the micro-processor and if using then using it through APIs is a user program.
-		If the prompt and history demand the use of a user program then it is not an operating system level application.
-
-		In general, you will have to classify the following as operating system operations as well. There may be more, but this is the general trend.
-
 		**OS-Level Operations**:
 		1. Requests for system information (e.g., CPU cores, available storage, hardware info).
 		2. Managing system processes or configurations (e.g., changing file permissions, killing processes, using system services).
 		3. Requests to perform system-wide actions like rebooting, updating, shutting down, or checking system status (e.g., battery, brightness, volume).
-		4. Any other system operation that directly interacts with or required hardware information, that is, requires interaction with the operating system.
+		4. Any other system operation that directly interacts with or modifies the operating system.
 		5. Examples:
 		   - Rebooting the system or viewing system settings.
 
@@ -62,10 +53,6 @@ prompt_init_dict = {
 
 		Prompt: Write a paragraph on renewable energy.
 		Output: no (reason: The request only involves content generation, not system-level interaction.)
-
-		Prompt: Write a 500 word essay on xyz and save it on the desktop.
-		Output: no (reason: This requires file operations, and no direct correlation with the operating system, rather uses only user applications.)
-
 	""",
 
 	'client_5003_init': f"""
@@ -183,8 +170,6 @@ prompt_dict = {
 
 					**Example Output** (These are examples, you do not have to follow them exactly but they are a good reference point):
 
-					To open a file
-
 					@@@json
 					{
 					  "operation": "open",
@@ -199,7 +184,6 @@ prompt_dict = {
 
 					**Important**: Generate only the JSON and summary as specified, formatted exactly as instructed.
 
-					The user can enter multiple commands in the same prompt, in which case there might be more than one operations in the json output.
 
 				    That's it.
 				    """,

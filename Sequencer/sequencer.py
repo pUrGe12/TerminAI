@@ -12,7 +12,7 @@ from pathlib import Path
 
 # Supabase API setup
 
-load_dotenv(dotenv_path=Path(__file__).parent.parent / '.env')
+load_dotenv(dotenv_path=Path(__file__).parent.parent.parent / '.env')
 
 url: str = str(os.getenv("SUPABASE_URL")).strip()
 key: str = str(os.getenv("SUPABASE_KEY")).strip()
