@@ -19,7 +19,7 @@ Check out the terminal [here](./terminal_gui/README.md)!
 
 ## Things to do RN!
 
-- [ ] Check if part A works
+- [-] Check if part A works
 - [ ] Create setup
 - [ ] We can probably use pyautogui for some 
 
@@ -27,10 +27,10 @@ once `part A` is robust, we'll move to GPT layer.
 
 ## Stuff to test out
 
-- [ ] Test out if the models output as they should.
-- [ ] Test the parsing logic.
-- [ ] Test the comms again.  
-- [ ] Test part A.
+- [-] Test out if the extraction models output as they should.
+- [-] Test the parsing logic.
+- [-] Test the comms again.  
+- [-] Test part A.
 - [ ] UPDATE the images, for the sequencer and the breakout and all.
 
 ## Brief explantion of the Idea
@@ -82,10 +82,12 @@ or we don't have to hardcode at all, we'll have a python file that has functions
 
 > [!TIP]
 > I am now thinking, what if we give broadcast the json to the smaller models, have the relevant one further refine it and then generate a command to do that? It will know exactly what the computer structure is from the config file... So, it will get the directory names right as well. Then we'll just execute it...
-
 ---
 
-Now it seems clearer. Let's see tomorrow with a fresher mind.
+> [!NOTE]
+> Have added API keys for supabase and gemini over the environment 
+
+---
 
 ## The structure
 
