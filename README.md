@@ -19,21 +19,10 @@ We need to define a setup that will read the user's current directory structure,
 
 ## Things to do RN!
 
-- [-] Check if part A works
 - [ ] Create setup
-- [ ] We can probably use pyautogui for some 
+We can probably use pyautogui for some 
 
 once `part A` is robust, we'll move to GPT layer.
-
-## Stuff to test out
-
-- [x] Test out if the extraction models output as they should.
-- [x] Test the parsing logic.
-- [x] Test the comms again.  
-- [x] Test part A.
-- [ ] UPDATE the images, for the sequencer and the breakout and all.
-
----
 
 ## The structure
 
