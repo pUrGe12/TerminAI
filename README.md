@@ -51,7 +51,7 @@ Pending work:
 
 one more thing,
 
-- [x] Add links to [workflow](./idea/README.md) and make it readable.
+- [ ] Add links to [workflow](./idea/README.md) and make it readable.
 
 ---
 
