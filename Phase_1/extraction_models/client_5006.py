@@ -10,9 +10,15 @@ import google.generativeai as genai
 from Ex_address import prompt_dict, prompt_init_dict
 from api_keys import apikey_dict
 
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+load_dotenv(dotenv_path=Path(__file__).parent.parent.parent / '.env')
+API_KEY = str(os.getenv("API_KEY")).strip()
+
 NAME = 'client_5006'
 
-API_KEY = str(apikey_dict.get('gemini_key'))
 genai.configure(api_key=API_KEY)
 
 model = genai.GenerativeModel('gemini-pro')
