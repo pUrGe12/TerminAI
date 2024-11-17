@@ -5,7 +5,6 @@ import json
 import queue
 from supabase import create_client, Client                                        # For database adding and pulling
 from Ex_address import function_dict                                              # For getting information on the models, to add to database
-from api_keys import supabase_key_dict                                            # For the supabase API setup
 
 import os
 from dotenv import load_dotenv

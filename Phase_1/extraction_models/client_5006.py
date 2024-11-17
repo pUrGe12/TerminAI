@@ -8,7 +8,6 @@ import re
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 import google.generativeai as genai
 from Ex_address import prompt_dict, prompt_init_dict
-from api_keys import apikey_dict
 
 import os
 from dotenv import load_dotenv
