@@ -1,54 +1,68 @@
-# Workflows
+# **The Extraction Layer**
 
-This is how the basic structure of the `extraction layer`
-
-![Extraction layer](./idea/ExtractionLayer.png)
+This layer categorizes user prompts into six general buckets to streamline functionality and enhance efficiency.
 
 ---
 
-Have each file run two models. 
-1. Figures out if the prompt + history, requires this model to run. Simply outputs yes or no.
-2. If the above model outputs `yes`, then the actual feature extraction model runs, and generates a `json`.
+## **How It Works**
 
-## Json
-
-Their json should basically contain
-
-1. The model name --> to tell what the model was doing
-2. The relevant values.
-
-## Functionality
-
-- [x] Each model receives user's prompt at roughly the same time.
-- [x] Models are able to extract the relevant features.
-- [x] Have the two models working.
-- [x] The prompts are present in the `address.py` file, so creating new models (or clients) is a simple matter of copy and pasting the client codes.
-- [x] Models are able to judge based on history as well. 
-- [x] Models are sending feedback to the sequencer, which includes their model name.
-
-> [!NOTE]
-> We might get more than one responses from the extraction layer. 
+For detailed information about client operations, refer to the [Workflow Documentation](./idea/Workflow_clients.md).
 
 ---
 
-- [ ] Handle more than one response from extraction layer.
+## **Prompt Categories**
 
-How? 
+The Extraction Layer organizes user prompts into the following six categories:
 
-- [ ] More than one responses means, all of them must be added to the database by the sequencer.
-- [x] If it is two or more other models, that means they all send their jsons to the breakout.
+1. **File Operations**  
+   Tasks involving file and directory management, such as:  
+   - Opening files  
+   - Writing to files  
+   - Creating directories  
 
-For these we will have to modify the breakout code. Will work on that tomorrow.
+2. **Operating System Operations**  
+   System-level tasks, including:  
+   - Adjusting brightness  
+   - Killing processes  
+   - Changing file or directory permissions  
 
-> [!TIP]
-> Having a breakout is always better and costs nothing. Don't add too much logic in one part. Diversify.
+3. **Application-Level Operations**  
+   Interactions with applications, such as:  
+   - Starting a browser  
+   - Searching for specific content  
+   - Opening, using, or closing specific software  
 
-- [x] Create comms with breakout.
+4. **Network-Level Operations**  
+   Tasks related to network and connectivity, including:  
+   - Switching Wi-Fi or Bluetooth on and off  
+   - Checking connected USB devices  
+
+5. **Installation Operations**  
+   Handling installations and updates, such as:  
+   - Installing new software  
+   - Running `pip install`  
+   - Executing `sudo apt-get` commands  
+
+6. **Content Generation Operations**  
+   Generating and displaying content directly on the terminal.  
+   **Note**: Content displayed **on the terminal** is a key focus for this category. Examples include:  
+   - Printing greetings  
+   - Generating formatted terminal outputs  
 
 ---
 
-For sequencer logic, head over [here](../Sequencer/idea/Workflow_sequencer.md)
+## **Adding New Models**
 
-For model logic, head over [here](./idea/Workflow_clients.md)
+If you need to create new models, follow these steps:  
+
+1. Copy the `client_500x.py` code into a new file.  
+2. Update the port number for the new client.  
+3. Configure the sequencer to broadcast prompts to the new model. For more details visit the [sequencer](../Sequencer) 
+4. Add the new model's prompt to the [Prompt File](./Ex_address.py).  
 
 ---
+
+## **Additional Notes**
+
+> **Note**:  
+> This framework is designed to be extensible. By leveraging the categorized buckets, developers can easily create or expand upon existing functionalities without disrupting the overall structure.
