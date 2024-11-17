@@ -13,7 +13,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv(dotenv_path=Path(__file__).parent.parent / '.env')
+load_dotenv(dotenv_path=Path(__file__).parent.parent.parent / '.env')
 API_KEY = str(os.getenv("API_KEY")).strip()
 
 NAME = 'client_5001'
