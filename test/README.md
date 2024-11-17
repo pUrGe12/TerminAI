@@ -1,0 +1,1 @@
+This is a directory used to test the functionalities. 
