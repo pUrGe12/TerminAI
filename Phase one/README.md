@@ -1,4 +1,4 @@
-# Part A
+# Phase A
 
 This is the first part of the backend. Here is what it is able to do.
 
@@ -17,21 +17,11 @@ The sequencer will do the following.
 
 - [x] It will then wait for their feedback. The feedback will include, `system_bool`, `extraction_model_function`, `extraction_model_summary` for the current prompt.
 
-- [ ] It will then add the feedback along with the current prompt to the database for future history implementation. 
-
->[!TIP]
-> Haven't tested this yet
-
-- [ ] The extraction models will recieve the broadcast and start acting. 
-
->[!TIP]
-> Haven't tested this yet
+- [x] It will then add the feedback along with the current prompt to the database for future history implementation. 
+- [x] The extraction models will recieve the broadcast and start acting. 
 
 - [x] They will have 2 models running, one detects if the extraction that this file is going to do is what the prompt demands or not, and the other will actually perform.
 - [x] The extraction performed outputs a json object that includes `model name` (so, we know what it was trying to do), some other important values. We'll leave it upto the model to detemine what `important` things it wants to include in the json. 
 
->[!TIP]
-> Haven't tested this yet
-
-- [ ] After having generated the json, we broadcast this json to the breakout.
-- [ ] We also provide the feedback features to the sequencer again.
+- [x] After having generated the json, we broadcast this json to the breakout.
+- [x] We also provide the feedback features to the sequencer again.
