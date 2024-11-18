@@ -234,7 +234,7 @@ if __name__ == "__main__":
                 name = f"client_{messages['sender'].split('-')[1]}"
                 work_summary = messages['work_summary']
                 
-                add_history(name, system_boolean, prompt, work_summary)
+                add_history(name, system_boolean, prompt.get('prompt'), work_summary)
                 print('added history')
             
             except queue.Empty:
