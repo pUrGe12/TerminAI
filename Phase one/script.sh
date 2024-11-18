@@ -12,5 +12,5 @@ gnome-terminal -- zsh -c "python3 ./Sequencer/sequencer.py; exec zsh"
 sleep 2
 
 for i in {5001..5006}; do
-    gnome-terminal -- zsh -c "python3 ./extraction_models/client_${i}.py; exec zsh"
+    gnome-terminal -- zsh -c "python3 ./extraction_models/models/client_${i}.py; exec zsh"
 done
