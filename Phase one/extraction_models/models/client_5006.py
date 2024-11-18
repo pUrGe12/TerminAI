@@ -64,7 +64,7 @@ class ReceiverSender:
         The prompt is already present with the sequencer.
         """
         data = {
-            'sysbool': True,                            # If this code sends data, then it must have been a system level operation!
+            'sysbool': False,                            # If this code sends data, then it must not have been a system level operation!
             'sender': f'Node-{self.listen_port}',       # This essentially gives the model function
             'work_summary': work_summary                # A short 20 word summary on what the user asked and what the model generated
         }
