@@ -222,7 +222,7 @@ if __name__ == "__main__":
                     if prompt['prompt'].lower() == 'quit':
                         break
                     
-                    history = get_history(5)
+                    history = get_history(3)
                     broadcaster.broadcast_message(prompt['prompt'], history)
                 except queue.Empty:
                     print('No prompt recieved till now. It has been 5 seconds')

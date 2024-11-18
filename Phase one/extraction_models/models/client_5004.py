@@ -118,7 +118,7 @@ class ReceiverSender:
         print(f"Listening for broadcasts on port {self.listen_port}...")
         while self.running:
             try:
-                data, addr = self.receive_socket.recvfrom(1024)
+                data, addr = self.receive_socket.recvfrom(2048)
                 received_data = json.loads(data.decode('utf-8'))
                 # Use a separate thread to print the received message
                 print_thread = threading.Thread(
