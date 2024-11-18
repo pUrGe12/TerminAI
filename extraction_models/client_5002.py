@@ -187,8 +187,12 @@ def GPT_response(user_prompt, history):
 
         json_list = re.findall('@@@json.*@@@', output, re.DOTALL)
         json_val = re.findall("{.*}", json_list[0].strip(), re.DOTALL)[0].strip() # getting a nice normal string here
-        work_summary = re.findall('\$\$\$summary.*\$\$\$', output, re.DOTALL)
-        
+        work_summary_match = re.search(r"\$\$\$summary\s*(.*?)\s*\$\$\$", output, re.DOTALL)
+        if match:
+            work_summary = work_summary_match.group(1).strip() # putting an else condition, even though I am sure there must be a match
+        else:
+            work_summary = 'Something went wrong'
+
         return (json_val, work_summary)
 
     except Exception as e:
