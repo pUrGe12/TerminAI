@@ -10,7 +10,7 @@ class Listener65032:
         self.running = True
         self.prompt_queue = queue.Queue()
         self.model_queue = queue.Queue()
-        self.sysbool_queue = queue.Queue()
+        self.json_queue = queue.Queue()
 
         # UDP socket for receiving messages
         self.receive_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -31,15 +31,17 @@ class Listener65032:
             try:
                 data, addr = self.receive_socket.recvfrom(1024)
                 received_data = json.loads(data.decode('utf-8'))
-                print(f"\nReceived message from {addr}: {received_data['message']}")
-                print(f"Sender: {received_data['sender']}")
-                print(f"Sysbool: {received_data['sysbool']}")
-                print(f"Prompt: {received_data['prompt']}")
+                print(f"\nReceived message from {addr}")
+                print(f"\nJson value: {received_data['json_value']}")
+                print(f"\nSystem_bool: {received_data['system_bool']}")
+                print(f"\nSender: {received_data['sender']}")
+                print(f"\nwork summary: {received_data['work_summary']}")
+                print(f"\nPrompt: {received_data['prompt']}")
 
                 # Put data into queues for processing
                 self.prompt_queue.put(received_data['prompt'])
                 self.model_queue.put(f"client_{received_data['sender'].split('-')[1]}")
-                self.sysbool_queue.put(received_data['sysbool'])
+                self.json_queue.put(received_data['json_value'])
 
             except json.JSONDecodeError:
                 print(f"\nReceived malformed data from {addr}")
