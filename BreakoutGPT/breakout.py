@@ -41,7 +41,7 @@ class Listener65032:
 
                 # Put data into queues for processing
                 self.prompt_queue.put(received_data['prompt'])
-                self.model_queue.put(f"client_{received_data['sender'].split('-')[1]}")
+                self.model_queue.put(f"client_{received_data['sender'].split('_')[1]}")
                 self.json_queue.put(received_data['json_value'])
                 self.sysbool_queue.put(received_data['system_bool'])
 
@@ -59,10 +59,10 @@ class Listener65032:
             try:
                 if not self.prompt_queue.empty() and not self.sysbool_queue.empty():
                     prompt = self.prompt_queue.get()
-                    sysbool = self.sysbool_queue.get().strip().lower()  # Convert to lowercase for consistency
+                    sysbool = self.sysbool_queue.get()  # This is a real boolean
 
                     # Define ports based on sysbool value
-                    if sysbool == 'true':
+                    if sysbool == True:
                         target_ports = [65011, 65012, 65013]
                     else:
                         target_ports = [65014, 65015]

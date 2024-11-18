@@ -88,7 +88,7 @@ class ReceiverSender:
         """
         data = {
             'json_value': json_value,
-            'system_bool': True,                                # If this code sends data, then it must have been a system level operation!
+            'system_bool': False,                                # If this code sends data, then it must not have been a system level operation!
             'sender': NAME,                                     # The model name is important because it determines which ports to broadcast further to
             'prompt': user_prompt,                              # This is the user's prompt, still being carried around
             'work_summary': work_summary                        # The work summary
